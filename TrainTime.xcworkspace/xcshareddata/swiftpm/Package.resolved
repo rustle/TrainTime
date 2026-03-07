@@ -1,0 +1,24 @@
+{
+  "originHash" : "de6af2144d32ffc6fe5b7229c6ed4897e621d0d8ea208261c05ab110d438d6bb",
+  "pins" : [
+    {
+      "identity" : "amtrak",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rustle/Amtrak.git",
+      "state" : {
+        "revision" : "5edfcf5ff8a8cca18a66294ca372f3ec48a301bb",
+        "version" : "0.1.0"
+      }
+    },
+    {
+      "identity" : "swiftconcurrencyserialqueue",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rustle/SwiftConcurrencySerialQueue.git",
+      "state" : {
+        "revision" : "15f75527aca7eea6ebc67ac64dc25da2fac0b70e",
+        "version" : "0.2.0"
+      }
+    }
+  ],
+  "version" : 3
+}

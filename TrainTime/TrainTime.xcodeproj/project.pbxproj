@@ -1,0 +1,680 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		914204AC2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue in Frameworks */ = {isa = PBXBuildFile; productRef = 914204AB2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue */; };
+		914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 914204AE2F5C8C4300DC98CC /* Amtrak */; };
+		9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */ = {isa = PBXBuildFile; productRef = 9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */; };
+		91C0E63F2F56692400788690 /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 91C0E63E2F56692400788690 /* Amtrak */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		91C0E6152F56686600788690 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91C0E5FF2F56686500788690 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91C0E6062F56686500788690;
+			remoteInfo = TrainTime;
+		};
+		91C0E61F2F56686600788690 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91C0E5FF2F56686500788690 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 91C0E6062F56686500788690;
+			remoteInfo = TrainTime;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		91C0E6072F56686500788690 /* TrainTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TrainTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91C0E6142F56686600788690 /* TrainTimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrainTimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		91C0E61E2F56686600788690 /* TrainTimeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TrainTimeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		91C0E6092F56686500788690 /* TrainTime */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TrainTime;
+			sourceTree = "<group>";
+		};
+		91C0E6172F56686600788690 /* TrainTimeTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TrainTimeTests;
+			sourceTree = "<group>";
+		};
+		91C0E6212F56686600788690 /* TrainTimeUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TrainTimeUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		91C0E6042F56686500788690 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91C0E63F2F56692400788690 /* Amtrak in Frameworks */,
+				914204AC2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue in Frameworks */,
+				914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */,
+				9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E6112F56686600788690 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E61B2F56686600788690 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		91C0E5FE2F56686500788690 = {
+			isa = PBXGroup;
+			children = (
+				91C0E6092F56686500788690 /* TrainTime */,
+				91C0E6172F56686600788690 /* TrainTimeTests */,
+				91C0E6212F56686600788690 /* TrainTimeUITests */,
+				91C0E63D2F56692400788690 /* Frameworks */,
+				91C0E6082F56686500788690 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		91C0E6082F56686500788690 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				91C0E6072F56686500788690 /* TrainTime.app */,
+				91C0E6142F56686600788690 /* TrainTimeTests.xctest */,
+				91C0E61E2F56686600788690 /* TrainTimeUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		91C0E63D2F56692400788690 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		91C0E6062F56686500788690 /* TrainTime */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91C0E6282F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTime" */;
+			buildPhases = (
+				91C0E6032F56686500788690 /* Sources */,
+				91C0E6042F56686500788690 /* Frameworks */,
+				91C0E6052F56686500788690 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				91C0E6092F56686500788690 /* TrainTime */,
+			);
+			name = TrainTime;
+			packageProductDependencies = (
+				91C0E63E2F56692400788690 /* Amtrak */,
+				9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */,
+				914204AB2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue */,
+				914204AE2F5C8C4300DC98CC /* Amtrak */,
+			);
+			productName = TrainTime;
+			productReference = 91C0E6072F56686500788690 /* TrainTime.app */;
+			productType = "com.apple.product-type.application";
+		};
+		91C0E6132F56686600788690 /* TrainTimeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91C0E62B2F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTimeTests" */;
+			buildPhases = (
+				91C0E6102F56686600788690 /* Sources */,
+				91C0E6112F56686600788690 /* Frameworks */,
+				91C0E6122F56686600788690 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91C0E6162F56686600788690 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				91C0E6172F56686600788690 /* TrainTimeTests */,
+			);
+			name = TrainTimeTests;
+			packageProductDependencies = (
+			);
+			productName = TrainTimeTests;
+			productReference = 91C0E6142F56686600788690 /* TrainTimeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		91C0E61D2F56686600788690 /* TrainTimeUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 91C0E62E2F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTimeUITests" */;
+			buildPhases = (
+				91C0E61A2F56686600788690 /* Sources */,
+				91C0E61B2F56686600788690 /* Frameworks */,
+				91C0E61C2F56686600788690 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				91C0E6202F56686600788690 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				91C0E6212F56686600788690 /* TrainTimeUITests */,
+			);
+			name = TrainTimeUITests;
+			packageProductDependencies = (
+			);
+			productName = TrainTimeUITests;
+			productReference = 91C0E61E2F56686600788690 /* TrainTimeUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91C0E5FF2F56686500788690 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2630;
+				LastUpgradeCheck = 2630;
+				TargetAttributes = {
+					91C0E6062F56686500788690 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					91C0E6132F56686600788690 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 91C0E6062F56686500788690;
+					};
+					91C0E61D2F56686600788690 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 91C0E6062F56686500788690;
+					};
+				};
+			};
+			buildConfigurationList = 91C0E6022F56686500788690 /* Build configuration list for PBXProject "TrainTime" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 91C0E5FE2F56686500788690;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				914204AA2F5C8B2700DC98CC /* XCRemoteSwiftPackageReference "SwiftConcurrencySerialQueue" */,
+				914204AD2F5C8C4300DC98CC /* XCRemoteSwiftPackageReference "Amtrak" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 91C0E6082F56686500788690 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				91C0E6062F56686500788690 /* TrainTime */,
+				91C0E6132F56686600788690 /* TrainTimeTests */,
+				91C0E61D2F56686600788690 /* TrainTimeUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		91C0E6052F56686500788690 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E6122F56686600788690 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E61C2F56686600788690 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		91C0E6032F56686500788690 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E6102F56686600788690 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		91C0E61A2F56686600788690 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		91C0E6162F56686600788690 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91C0E6062F56686500788690 /* TrainTime */;
+			targetProxy = 91C0E6152F56686600788690 /* PBXContainerItemProxy */;
+		};
+		91C0E6202F56686600788690 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 91C0E6062F56686500788690 /* TrainTime */;
+			targetProxy = 91C0E61F2F56686600788690 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		91C0E6262F56686600788690 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		91C0E6272F56686600788690 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		91C0E6292F56686600788690 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Train Time";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTime;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		91C0E62A2F56686600788690 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Train Time";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTime;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
+				RUN_CLANG_STATIC_ANALYZER = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		91C0E62C2F56686600788690 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTimeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrainTime.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrainTime";
+			};
+			name = Debug;
+		};
+		91C0E62D2F56686600788690 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTimeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TrainTime.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TrainTime";
+			};
+			name = Release;
+		};
+		91C0E62F2F56686600788690 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTimeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TrainTime;
+			};
+			name = Debug;
+		};
+		91C0E6302F56686600788690 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rustle.TrainTimeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TrainTime;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		91C0E6022F56686500788690 /* Build configuration list for PBXProject "TrainTime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91C0E6262F56686600788690 /* Debug */,
+				91C0E6272F56686600788690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91C0E6282F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTime" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91C0E6292F56686600788690 /* Debug */,
+				91C0E62A2F56686600788690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91C0E62B2F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTimeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91C0E62C2F56686600788690 /* Debug */,
+				91C0E62D2F56686600788690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		91C0E62E2F56686600788690 /* Build configuration list for PBXNativeTarget "TrainTimeUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				91C0E62F2F56686600788690 /* Debug */,
+				91C0E6302F56686600788690 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		914204AA2F5C8B2700DC98CC /* XCRemoteSwiftPackageReference "SwiftConcurrencySerialQueue" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rustle/SwiftConcurrencySerialQueue.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
+		914204AD2F5C8C4300DC98CC /* XCRemoteSwiftPackageReference "Amtrak" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/rustle/Amtrak.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		914204AB2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 914204AA2F5C8B2700DC98CC /* XCRemoteSwiftPackageReference "SwiftConcurrencySerialQueue" */;
+			productName = SwiftConcurrencySerialQueue;
+		};
+		914204AE2F5C8C4300DC98CC /* Amtrak */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 914204AD2F5C8C4300DC98CC /* XCRemoteSwiftPackageReference "Amtrak" */;
+			productName = Amtrak;
+		};
+		9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftConcurrencySerialQueue;
+		};
+		91C0E63E2F56692400788690 /* Amtrak */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Amtrak;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 91C0E5FF2F56686500788690 /* Project object */;
+}
