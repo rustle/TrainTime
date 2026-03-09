@@ -3,7 +3,7 @@ import Foundation
 import Observation
 
 ///
-struct TTStation: Codable, Equatable, Sendable, CustomDebugStringConvertible {
+struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvertible {
     ///
     let name: String?
     ///

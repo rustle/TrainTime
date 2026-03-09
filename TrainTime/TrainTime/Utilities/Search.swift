@@ -14,13 +14,13 @@ final class Search<T> where T: Sendable, T: Equatable {
     private(set) var filteredValue: T? = nil
     @ObservationIgnored private var query: String = ""
     @ObservationIgnored private var updateQueryDebounce: Debounce<String>?
-    @ObservationIgnored private var updatedQuery: UpdatedQuery = .done(generation: 0)
+    @ObservationIgnored private var updatedQuery: UpdatedQuery = .done(0)
     @ObservationIgnored private var filterTask: Task<T?, Never>? = nil
     @ObservationIgnored private var filter: @Sendable (String, T) async -> T
     init(initialValue: T, filter: @Sendable @escaping (String, T) async -> T) {
         self.value = initialValue
         self.filter = filter
-        updateQueryDebounce = Debounce(duration: .milliseconds(200), tolerance: .milliseconds(50)) { [weak self] value, _ in
+        updateQueryDebounce = Debounce(duration: .milliseconds(150), tolerance: .milliseconds(50)) { [weak self] value, _ in
             guard let self else {
                 return
             }

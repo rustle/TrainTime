@@ -7,11 +7,12 @@ import SwiftConcurrencySerialQueue
 @MainActor
 @Observable
 class StationListState {
+    var selectedStation: StationRow?
     private(set) var allRows: [StationRow] = []
     private(set) var filteredRows: [StationRow]?
     var query: String = ""
     init() {
-        loadDebounce = Debounce(duration: .milliseconds(200),
+        loadDebounce = Debounce(duration: .milliseconds(150),
                                 tolerance: .milliseconds(100)) { [weak self] client, _ in
             await self?._load(with: client)
         }

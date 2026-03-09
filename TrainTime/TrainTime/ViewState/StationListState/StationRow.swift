@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 @Observable
-final class StationRow: Identifiable, Comparable, Sendable, CustomDebugStringConvertible {
+final class StationRow: Identifiable, Comparable, Hashable, Sendable, CustomDebugStringConvertible {
     // MARK: - Sorting
     static func == (lhs: StationRow,
                     rhs: StationRow) -> Bool {
@@ -24,6 +24,10 @@ final class StationRow: Identifiable, Comparable, Sendable, CustomDebugStringCon
     var debugDescription: String {
         station.debugDescription
     }
+    // MARK: - Hashable
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(station)
+    }
     // MARK: - Init
     init(station: TTStation) {
         title = station.name ?? station.code
@@ -40,12 +44,15 @@ extension Array where Element == StationRow {
     func search(query: String) -> Self {
         let normalizedQuery = query.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
         var exactCode: [StationRow] = []
+        var codePrefix: [StationRow] = []
         var namePrefix: [StationRow] = []
         var nameContains: [StationRow] = []
         var cityContains: [StationRow] = []
         for row in self {
             if row.normalizedCode == normalizedQuery {
                 exactCode.sortedInsert(row)
+            } else if row.normalizedCode.hasPrefix(normalizedQuery) {
+                codePrefix.sortedInsert(row)
             } else if let name = row.normalizedName {
                 if name.hasPrefix(normalizedQuery) {
                     namePrefix.sortedInsert(row)
@@ -58,7 +65,7 @@ extension Array where Element == StationRow {
                 cityContains.sortedInsert(row)
             }
         }
-        return exactCode + namePrefix + nameContains + cityContains
+        return exactCode + codePrefix + namePrefix + nameContains + cityContains
     }
 }
 

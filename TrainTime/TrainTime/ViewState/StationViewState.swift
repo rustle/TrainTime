@@ -40,7 +40,7 @@ class StationViewState {
     func load(with client: TTClient, refreshStation: Bool = false) async throws {
         Logger.viewState.debug("StationViewState: load(refreshStation: \(refreshStation))")
         if loadDebounce == nil {
-            loadDebounce = Debounce(duration: .milliseconds(200),
+            loadDebounce = Debounce(duration: .milliseconds(150),
                                     tolerance: .milliseconds(100)) { [weak self] refreshStation, _ in
                 await self?._load(with: client,
                                   refreshStation: refreshStation)

@@ -14,9 +14,65 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2BCCC2E94ACC3D9294CE4E17"
+               BuildableName = "Amtrak.framework"
+               BlueprintName = "Amtrak"
+               ReferencedContainer = "container:Tuist/.build/tuist-derived/Amtrak/Amtrak.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CFA966A7C30628D7D2114B07"
+               BuildableName = "SwiftConcurrencySerialQueue.framework"
+               BlueprintName = "SwiftConcurrencySerialQueue"
+               ReferencedContainer = "container:Tuist/.build/tuist-derived/SwiftConcurrencySerialQueue/SwiftConcurrencySerialQueue.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "98B18512B837E20D6C36D3D3"
                BuildableName = "TrainTime.app"
                BlueprintName = "TrainTime"
+               ReferencedContainer = "container:TrainTime.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F744F200FA0543F6EAC74D08"
+               BuildableName = "TrainTimeTests.xctest"
+               BlueprintName = "TrainTimeTests"
+               ReferencedContainer = "container:TrainTime.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "780501EFFD0173D896A2C778"
+               BuildableName = "TrainTimeUITests.xctest"
+               BlueprintName = "TrainTimeUITests"
                ReferencedContainer = "container:TrainTime.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,16 +118,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "98B18512B837E20D6C36D3D3"
-            BuildableName = "TrainTime.app"
-            BlueprintName = "TrainTime"
-            ReferencedContainer = "container:TrainTime.xcodeproj">
+            BlueprintIdentifier = "2BCCC2E94ACC3D9294CE4E17"
+            BuildableName = "Amtrak.framework"
+            BlueprintName = "Amtrak"
+            ReferencedContainer = "container:Tuist/.build/tuist-derived/Amtrak/Amtrak.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -79,16 +134,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "98B18512B837E20D6C36D3D3"
-            BuildableName = "TrainTime.app"
-            BlueprintName = "TrainTime"
-            ReferencedContainer = "container:TrainTime.xcodeproj">
+            BlueprintIdentifier = "2BCCC2E94ACC3D9294CE4E17"
+            BuildableName = "Amtrak.framework"
+            BlueprintName = "Amtrak"
+            ReferencedContainer = "container:Tuist/.build/tuist-derived/Amtrak/Amtrak.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
