@@ -16,10 +16,6 @@ final class StationRow: Identifiable, Comparable, Hashable, Sendable, CustomDebu
     let id: String
     let title: String
     let station: TTStation
-    // MARK: - Search
-    let normalizedCode: String
-    let normalizedName: String?
-    let normalizedCity: String?
     // MARK: - Debugging
     var debugDescription: String {
         station.debugDescription
@@ -33,10 +29,6 @@ final class StationRow: Identifiable, Comparable, Hashable, Sendable, CustomDebu
         title = station.name ?? station.code
         id = station.code + station.trainIdentifiers.joined()
         self.station = station
-        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-        normalizedCode = station.code.folding(options: options, locale: .current)
-        normalizedName = station.name?.folding(options: options, locale: .current)
-        normalizedCity = station.city?.folding(options: options, locale: .current)
     }
 }
 
@@ -49,19 +41,19 @@ extension Array where Element == StationRow {
         var nameContains: [StationRow] = []
         var cityContains: [StationRow] = []
         for row in self {
-            if row.normalizedCode == normalizedQuery {
+            if row.station.normalizedCode == normalizedQuery {
                 exactCode.sortedInsert(row)
-            } else if row.normalizedCode.hasPrefix(normalizedQuery) {
+            } else if row.station.normalizedCode.hasPrefix(normalizedQuery) {
                 codePrefix.sortedInsert(row)
-            } else if let name = row.normalizedName {
+            } else if let name = row.station.normalizedName {
                 if name.hasPrefix(normalizedQuery) {
                     namePrefix.sortedInsert(row)
                 } else if name.contains(normalizedQuery) {
                     nameContains.sortedInsert(row)
-                } else if let city = row.normalizedCity, city.contains(normalizedQuery) {
+                } else if let city = row.station.normalizedCity, city.contains(normalizedQuery) {
                     cityContains.sortedInsert(row)
                 }
-            } else if let city = row.normalizedCity, city.contains(normalizedQuery) {
+            } else if let city = row.station.normalizedCity, city.contains(normalizedQuery) {
                 cityContains.sortedInsert(row)
             }
         }
@@ -71,6 +63,6 @@ extension Array where Element == StationRow {
 
 extension StationRow {
     func normalizedTitle() -> String {
-        normalizedName ?? normalizedCode
+        station.normalizedName ?? station.normalizedCode
     }
 }

@@ -20,19 +20,7 @@ struct Stop: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     public let status: StopStatus?
     ///
     var debugDescription: String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [
-            .prettyPrinted,
-            .sortedKeys,
-            .withoutEscapingSlashes
-        ]
-        encoder.dateEncodingStrategy = .iso8601
-        if let data = try? encoder.encode(self),
-            let string = String(data: data,
-                                encoding: .utf8) {
-            return string
-        }
-        return "Train"
+        JSONEncoder.jsonDebugDescription(for: self) ?? "Stop"
     }
     ///
     public init(name: String,

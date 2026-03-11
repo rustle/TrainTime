@@ -1,5 +1,6 @@
 import Amtrak
 import Foundation
+import GRDB
 import Observation
 
 ///
@@ -24,23 +25,23 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
     let zip: String?
     ///
     let trainIdentifiers: [String]
+    // MARK: - Search
+    ///
+    let normalizedCode: String
+    ///
+    let normalizedName: String?
+    ///
+    let normalizedCity: String?
+    // MARK: - User data
+    ///
+    let isFavorite: Bool?
+    // MARK: - Debugging
     ///
     var debugDescription: String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [
-            .prettyPrinted,
-            .sortedKeys,
-            .withoutEscapingSlashes
-        ]
-        encoder.dateEncodingStrategy = .iso8601
-        if let data = try? encoder.encode(self),
-            let string = String(data: data,
-                                encoding: .utf8) {
-            return string
-        }
-        return "Train"
+        JSONEncoder.jsonDebugDescription(for: self) ?? "Station"
     }
-    ///
+    // MARK: - Init
+    /// init for #preview
     init(name: String? = nil,
          code: String,
          tz: String? = nil,
@@ -61,8 +62,16 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         self.city = city
         self.zip = zip
         self.trainIdentifiers = trainIdentifiers
+        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
+        normalizedCode = code.folding(options: options,
+                                      locale: .current)
+        normalizedName = name?.folding(options: options,
+                                       locale: .current)
+        normalizedCity = city?.folding(options: options,
+                                       locale: .current)
+        isFavorite = nil
     }
-    ///
+    /// init for mapping from Amtrak.StationMetadata
     init(stationMetadata: StationMetadata) {
         name = stationMetadata.name
         code = stationMetadata.code
@@ -74,6 +83,14 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         city = stationMetadata.city
         zip = stationMetadata.zip
         trainIdentifiers = stationMetadata.trains
+        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
+        normalizedCode = stationMetadata.code.folding(options: options,
+                                                      locale: .current)
+        normalizedName = stationMetadata.name?.folding(options: options,
+                                                       locale: .current)
+        normalizedCity = stationMetadata.city?.folding(options: options,
+                                                       locale: .current)
+        isFavorite = nil
     }
 }
 

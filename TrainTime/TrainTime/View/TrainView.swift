@@ -90,8 +90,8 @@ struct TrainView: View {
                         lastValTS: date)
     NavigationView {
         List {
-            TrainView(train: train, stationCode: "UCA")
+            TrainView(train: train,
+                      stationCode: "UCA")
         }
     }
-        .environment(\.client, ClientKey.defaultValue)
 }

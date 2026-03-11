@@ -1,5 +1,5 @@
-import SwiftUI
 import Amtrak
+import SwiftUI
 
 struct StationView: View {
     struct ListContainer: View {
@@ -12,24 +12,27 @@ struct StationView: View {
             }
         }
     }
-    @Environment(\.client) var client
     @State var state: StationViewState
     var body: some View {
         ListContainer(trains: state.trains,
                       stationCode: state.station.code)
             .navigationTitle(state.title)
             .refreshable {
-                try? await state.load(with: client, refreshStation: true)
+                try? await state.load(refreshStation: true)
             }
             .task {
-                try? await state.load(with: client)
+                try? await state.load()
             }
     }
 }
 
 #Preview {
     NavigationView {
-        StationView(state: .init(station: .init(name: "Utica", code: "UCA", trainIdentifiers: ["48-1"])))
+        StationView(
+            state: .init(station: .init(name: "Utica",
+                                        code: "UCA",
+                                        trainIdentifiers: ["48-1"]),
+                         component: StationComponent(client: TTClient()))
+        )
     }
-        .environment(\.client, ClientKey.defaultValue)
 }

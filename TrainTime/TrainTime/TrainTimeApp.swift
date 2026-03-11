@@ -1,28 +1,34 @@
 import SwiftUI
 
-struct ClientKey: EnvironmentKey {
-    static let defaultValue: TTClient = .init()
-}
-
-extension EnvironmentValues {
-    var client: TTClient {
-        get { self[ClientKey.self] }
-        set { self[ClientKey.self] = newValue }
-    }
-}
-
 @main
 struct TrainTimeApp: App {
+    @State var appComponent: AppComponent?
+    @State var stationListComponent: StationListComponent?
+    private func setup() async {
+        do {
+            let database = Database(name: "train.db")
+            let connection = try database.newConnection()
+            try await database.runMigrations(connection)
+            let appComponent = AppComponent(database: database,
+                                            databaseConnection: connection)
+            self.appComponent = appComponent
+            self.stationListComponent = appComponent.makeStationListComponent()
+        } catch {
+            // TODO: Retry logic
+        }
+    }
     var body: some Scene {
         WindowGroup {
-#if USE_COLLECTION_VIEW
-            StationListCollectionView()
-                .environment(\.client, ClientKey.defaultValue)
-#else
-            StationList()
-                .environment(\.client, ClientKey.defaultValue)
-#endif // USE_COLLECTION_VIEW
-                
+            if let stationListComponent {
+                StationList(component: stationListComponent)
+            } else {
+                Group {
+                    ProgressView()
+                }
+                    .task {
+                        await setup()
+                    }
+            }
         }
     }
 }

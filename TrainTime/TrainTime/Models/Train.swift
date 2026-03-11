@@ -64,19 +64,7 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     let alerts: [TrainAlert]
     ///
     var debugDescription: String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [
-            .prettyPrinted,
-            .sortedKeys,
-            .withoutEscapingSlashes
-        ]
-        encoder.dateEncodingStrategy = .iso8601
-        if let data = try? encoder.encode(self),
-            let string = String(data: data,
-                                encoding: .utf8) {
-            return string
-        }
-        return "Train"
+        JSONEncoder.jsonDebugDescription(for: self) ??  "Train"
     }
     ///
     init(routeName: String? = nil,

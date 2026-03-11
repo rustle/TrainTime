@@ -11,6 +11,7 @@
 		914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 914204AE2F5C8C4300DC98CC /* Amtrak */; };
 		9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */ = {isa = PBXBuildFile; productRef = 9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */; };
 		91C0E63F2F56692400788690 /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 91C0E63E2F56692400788690 /* Amtrak */; };
+		91F121C42F5FA52D003BD61B /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 91F121C32F5FA52D003BD61B /* GRDB */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				91C0E63F2F56692400788690 /* Amtrak in Frameworks */,
+				91F121C42F5FA52D003BD61B /* GRDB in Frameworks */,
 				914204AC2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue in Frameworks */,
 				914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */,
 				9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */,
@@ -155,6 +157,7 @@
 				9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */,
 				914204AB2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue */,
 				914204AE2F5C8C4300DC98CC /* Amtrak */,
+				91F121C32F5FA52D003BD61B /* GRDB */,
 			);
 			productName = TrainTime;
 			productReference = 91C0E6072F56686500788690 /* TrainTime.app */;
@@ -241,6 +244,7 @@
 			packageReferences = (
 				914204AA2F5C8B2700DC98CC /* XCRemoteSwiftPackageReference "SwiftConcurrencySerialQueue" */,
 				914204AD2F5C8C4300DC98CC /* XCRemoteSwiftPackageReference "Amtrak" */,
+				91F121C22F5FA52D003BD61B /* XCRemoteSwiftPackageReference "GRDB.swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 91C0E6082F56686500788690 /* Products */;
@@ -320,6 +324,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 91C0E6462F56686600788690 /* TrainTime-Project-Debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
 			};
 			name = Debug;
 		};
@@ -327,6 +332,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 91C0E6472F56686600788690 /* TrainTime-Project-Release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 9UWG2WM9NM;
 			};
 			name = Release;
 		};
@@ -486,6 +492,14 @@
 				minimumVersion = 0.1.0;
 			};
 		};
+		91F121C22F5FA52D003BD61B /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -506,6 +520,11 @@
 		91C0E63E2F56692400788690 /* Amtrak */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Amtrak;
+		};
+		91F121C32F5FA52D003BD61B /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91F121C22F5FA52D003BD61B /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

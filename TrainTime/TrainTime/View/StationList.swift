@@ -3,38 +3,36 @@ import os
 import SwiftUI
 
 struct StationList: View {
-    struct ListContainer: View {
-        let rows: [StationRow]
-        var body: some View {
-            List(rows) { row in
-                Row(row: row)
-            }
-        }
+    @State var state: StationListState
+    init(component: StationListDependency) {
+        state = .init(component: component)
     }
-    struct Row: View {
-        let row: StationRow
-        var body: some View {
-            NavigationLink(destination: {
-                StationView(state: .init(station: row.station))
-            }, label: {
-                VStack(alignment: .leading) {
-                    HStack(alignment: .firstTextBaseline) {
-                        Text(row.title)
-                            .font(.headline)
-                        Spacer()
-                        Text(row.station.code)
-                            .font(.caption2.monospaced().smallCaps())
-                    }
-                }
-            })
-        }
-    }
-    @Environment(\.client) var client
-    @State var state: StationListState = .init()
     var body: some View {
         //let _ = Self._printChanges()
         NavigationStack {
-            ListContainer(rows: state.filteredRows ?? state.allRows)
+            List(state.filteredRows ?? state.allRows) { row in
+                    NavigationLink(destination: {
+                        StationView(state: .init(station: row.station,
+                                                 component: state.component.makeStationComponent()))
+                    }, label: {
+                        VStack(alignment: .center) {
+                            HStack(alignment: .center) {
+                                Text(row.title)
+                                    .font(.largeTitle)
+                                    .bold()
+                                Spacer()
+                                Text(row.station.code)
+                                    .font(.title2.monospaced())
+                            }
+                            .padding(.vertical)
+                        }
+//                        .swipeActions(edge: .leading) {
+//                            Button { print("toggle") } label: {
+//                                Image(systemName: "star.fill")
+//                            }
+//                        }
+                    })
+                }
                 .navigationTitle("Stations")
                 .searchable(text: $state.query,
                             prompt: "Search Stations")
@@ -42,16 +40,15 @@ struct StationList: View {
                     state.flush()
                 }
                 .refreshable {
-                    try? await state.load(with: client)
+                    try? await state.load()
                 }
                 .task {
-                    try? await state.load(with: client)
+                    try? await state.load()
                 }
         }
     }
 }
 
 #Preview {
-    StationList()
-        .environment(\.client, ClientKey.defaultValue)
+    StationList(component: StationListComponent.previewComponent())
 }

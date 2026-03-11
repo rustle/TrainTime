@@ -32,29 +32,29 @@ class StationViewState {
         station.name ?? station.code
     }
     private(set) var trains: [TrainRow] = []
-    init(station: TTStation) {
+    let component: StationComponent
+    init(station: TTStation,
+         component: StationComponent) {
         self.station = station
+        self.component = component
+        loadDebounce = Debounce(duration: .milliseconds(150),
+                                tolerance: .milliseconds(100)) { [weak self] refreshStation, _ in
+            await self?._load(refreshStation: refreshStation)
+        }
     }
     private let loadQueue = SerialQueueThrowing()
     private var loadDebounce: Debounce<Bool>?
-    func load(with client: TTClient, refreshStation: Bool = false) async throws {
+    func load(refreshStation: Bool = false) async throws {
         Logger.viewState.debug("StationViewState: load(refreshStation: \(refreshStation))")
-        if loadDebounce == nil {
-            loadDebounce = Debounce(duration: .milliseconds(150),
-                                    tolerance: .milliseconds(100)) { [weak self] refreshStation, _ in
-                await self?._load(with: client,
-                                  refreshStation: refreshStation)
-            }
-        }
         // Might be nice to have refreshStation latch during debounce
         await loadDebounce?.emit(value: refreshStation).value
     }
-    private func _load(with client: TTClient,
-                       refreshStation: Bool = false) async {
+    private func _load(refreshStation: Bool = false) async {
         let stationCode = station.code
         do {
             if (refreshStation) {
                 Logger.viewState.debug("StationViewState: Refresh station")
+                let client = component.client
                 station = try await loadQueue.enqueue { _ in
                     try await client.fetchStation(id: stationCode)
                 }
@@ -63,8 +63,7 @@ class StationViewState {
             let trainIdentifiers = station.trainIdentifiers
             trains = try await loadQueue
                 .enqueue { _ in
-                    try await self._batch(with: client,
-                                          size: 3,
+                    try await self._batch(size: 3,
                                           stationCode: stationCode,
                                           trainIdentifiers: trainIdentifiers)
                 }
@@ -72,10 +71,10 @@ class StationViewState {
             Logger.viewState.error("StationViewState: load() error \(error)")
         }
     }
-    private func _batch(with client: TTClient,
-                        size: Int,
+    private func _batch(size: Int,
                         stationCode: String,
                         trainIdentifiers: [String]) async throws -> [TrainRow] {
+        let client = component.client
         var trains = [TrainRow]()
         trains.reserveCapacity(trainIdentifiers.count)
         try await withThrowingTaskGroup(of: TrainRow?.self) { group in

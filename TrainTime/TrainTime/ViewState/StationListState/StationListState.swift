@@ -11,12 +11,14 @@ class StationListState {
     private(set) var allRows: [StationRow] = []
     private(set) var filteredRows: [StationRow]?
     var query: String = ""
-    init() {
+    let component: StationListDependency
+    init(component: StationListDependency) {
+        self.component = component
         loadDebounce = Debounce(duration: .milliseconds(150),
                                 tolerance: .milliseconds(100)) { [weak self] client, _ in
-            await self?._load(with: client)
+            await self?._load()
         }
-        observeState()
+        observe()
     }
     func update(filteredRows: [StationRow]?) {
         if self.filteredRows != filteredRows {
@@ -25,6 +27,7 @@ class StationListState {
     }
     private func update(allRows: [StationRow]) {
         if self.allRows != allRows {
+            Logger.viewState.debug("Update allRows")
             self.allRows = allRows
         }
     }
@@ -32,19 +35,15 @@ class StationListState {
         rows.search(query: query)
     }
     private let loadQueue = SerialQueueThrowing()
-    @ObservationIgnored private var loadDebounce: Debounce<TTClient>?
-    func load(with client: TTClient) async throws {
+    @ObservationIgnored private var loadDebounce: Debounce<Void>?
+    func load() async throws {
         Logger.viewState.debug("StationListState: load()")
-        await loadDebounce?.emit(value: client).value
+        await loadDebounce?.emit().value
     }
-    private func _load(with client: TTClient) async {
+    private func _load() async {
         do {
-            update(allRows: try await loadQueue
-                .enqueue { _ in
-                    try await client
-                        .fetchAllStations()
-                }
-                .sortedRows())
+            try await component.service.load()
+            observeDatabaseIfNeeded()
         } catch {
             Logger.viewState.error("StationListState: load() error \(error)")
         }
@@ -52,14 +51,26 @@ class StationListState {
     func flush() {
         search.flush()
     }
-    private func observeState() {
+    private var rowsTask: Task<Void, any Error>?
+    private func observeDatabaseIfNeeded() {
+        guard rowsTask == nil else {
+            return
+        }
+        let stationsStream = self.component.service.stations
+        rowsTask = Task { @MainActor in
+            for try await stations in stationsStream {
+                update(allRows: stations.map(StationRow.init(station:)))
+            }
+        }
+    }
+    private func observe() {
         withObservationTracking {
             search.update(value: allRows)
             search.update(query: query)
             filteredRows = search.filteredValue
         } onChange: {
-            Task(priority: .userInitiated) { @MainActor in
-                self.observeState()
+            Task { @MainActor in
+                self.observe()
             }
         }
     }
