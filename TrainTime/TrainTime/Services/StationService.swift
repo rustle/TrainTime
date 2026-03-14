@@ -20,11 +20,11 @@ extension DatabasePool: WriteStationProvider {
 }
 
 protocol StationStreamProvider: Sendable {
-    func station(code: String) async throws -> AnyThrowingSendableSequence<TTStation?>
+    func station(code: String) async throws -> any AsyncThrowingSendableSequence<TTStation?>
 }
 
 extension DatabasePool: StationStreamProvider {
-    func station(code: String) async throws -> AnyThrowingSendableSequence<TTStation?> {
+    func station(code: String) async throws -> any AsyncThrowingSendableSequence<TTStation?> {
         ValueObservation
             .tracking { db in
                 try TTStation
@@ -50,7 +50,7 @@ struct StationService: Sendable {
         let station = try await fetchStationProvider.fetchStation(id: id)
         try await writeStationProvider.writeStation(station)
     }
-    func station(code: String) async throws -> AnyThrowingSendableSequence<TTStation?> {
+    func station(code: String) async throws -> any AsyncThrowingSendableSequence<TTStation?> {
         try await stationStreamProvider.station(code: code)
     }
 }

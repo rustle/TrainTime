@@ -3,8 +3,6 @@ import GRDB
 import os
 import SwiftConcurrencySerialQueue
 
-typealias AnyThrowingSendableSequence<V: Sendable> = any AsyncSequence<V, any Error> & Sendable
-
 protocol FetchAllStationsProvider: Sendable {
     func fetchAllStations() async throws -> TTStationResponse
 }
@@ -47,11 +45,11 @@ extension DatabasePool: WriteStationsProvider {
 }
 
 protocol StationsStreamProvider: Sendable {
-    func stations() async throws -> AnyThrowingSendableSequence<[TTStation]>
+    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]>
 }
 
 extension DatabasePool: StationsStreamProvider {
-    func stations() async throws -> AnyThrowingSendableSequence<[TTStation]> {
+    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
         ValueObservation
             .tracking { db in
                 try TTStation
@@ -92,7 +90,7 @@ struct StationsService: Sendable {
             .updateStation(code: code,
                            isFavorite: isFavorite)
     }
-    func stations() async throws -> any AsyncSequence<[TTStation], any Error> & Sendable {
+    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
         try await stationsStreamProvider.stations()
     }
 }

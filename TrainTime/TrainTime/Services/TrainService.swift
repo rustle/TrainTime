@@ -65,12 +65,12 @@ extension DatabasePool: WriteTrainsProvider {
 
 protocol TrainsStreamProvider: Sendable {
     func trains(identifiers: [String],
-                stationCode: String?) async throws -> AnyThrowingSendableSequence<[TTTrain]>
+                stationCode: String?) async throws -> any AsyncThrowingSendableSequence<[TTTrain]>
 }
 
 extension DatabasePool: TrainsStreamProvider {
     func trains(identifiers: [String],
-                stationCode: String?) async throws -> AnyThrowingSendableSequence<[TTTrain]> {
+                stationCode: String?) async throws -> any AsyncThrowingSendableSequence<[TTTrain]> {
         ValueObservation
             .tracking { db in
                 let trains: [TTTrain]
@@ -136,7 +136,7 @@ struct TrainService: Sendable {
         try await writeTrainsProvider.writeTrains(trains)
     }
     func trains(identifiers: [String],
-                stationCode: String? = nil) async throws -> AnyThrowingSendableSequence<[TTTrain]> {
+                stationCode: String? = nil) async throws -> any AsyncThrowingSendableSequence<[TTTrain]> {
         try await trainsStreamProvider.trains(identifiers: identifiers,
                                               stationCode: stationCode)
     }

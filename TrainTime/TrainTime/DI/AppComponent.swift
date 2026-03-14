@@ -55,7 +55,7 @@ struct PreviewAppComponent: AppDependency {
     private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
         private var lastStations: [TTStation] = []
         private var trains: [String:TTTrain] = [:]
-        func stations() async throws -> AnyThrowingSendableSequence<[TTStation]> {
+        func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
             _stations
         }
         func writeStations(_ stations: [TTStation]) async throws {
@@ -88,7 +88,7 @@ struct PreviewAppComponent: AppDependency {
             }
             _stationContinuation.yield(station)
         }
-        func station(code: String) async throws -> AnyThrowingSendableSequence<TTStation?> {
+        func station(code: String) async throws -> any AsyncThrowingSendableSequence<TTStation?> {
             _station
         }
         func writeTrains(_ trains: [TTTrain]) async throws {
@@ -97,7 +97,7 @@ struct PreviewAppComponent: AppDependency {
             }
         }
         func trains(identifiers: [String],
-                    stationCode: String?) async throws -> AnyThrowingSendableSequence<[TTTrain]> {
+                    stationCode: String?) async throws -> any AsyncThrowingSendableSequence<[TTTrain]> {
             fatalError()
         }
         private let _stations: AsyncThrowingStream<[TTStation], any Error>
