@@ -15,8 +15,13 @@ class StationListState {
     init(component: StationListDependency) {
         self.component = component
         loadDebounce = Debounce(duration: .milliseconds(150),
-                                tolerance: .milliseconds(100)) { [weak self] client, _ in
+                                tolerance: .milliseconds(100)) { [weak self] _, _ in
             await self?._load()
+        }
+        isFavoriteDebounce = Debounce(duration: .milliseconds(150),
+                                      tolerance: .milliseconds(100)) { [weak self] value, _ in
+            await self?._updateStation(code: value.0,
+                                       isFavorite: value.1)
         }
         observe()
     }
@@ -50,6 +55,21 @@ class StationListState {
     }
     func flush() {
         search.flush()
+    }
+    @ObservationIgnored private var isFavoriteDebounce: Debounce<(String, Bool?)>?
+    func updateStation(code: String,
+                       isFavorite: Bool?) {
+        isFavoriteDebounce?.emit(value: (code, isFavorite))
+    }
+    private func _updateStation(code: String,
+                                isFavorite: Bool?) async {
+        do {
+            try await component.service
+                .updateStation(code: code,
+                               isFavorite: isFavorite)
+        } catch {
+            Logger.viewState.error("Failed to update isFavorite for \(code) - \(String(describing: isFavorite)) - \(error.localizedDescription)")
+        }
     }
     private var rowsTask: Task<Void, any Error>?
     private func observeDatabaseIfNeeded() {

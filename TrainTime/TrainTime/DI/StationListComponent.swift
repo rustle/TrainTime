@@ -8,14 +8,29 @@ protocol StationListDependency: Sendable {
 
 struct StationListComponent: StationListDependency {
 #if DEBUG
-    struct PreviewDatabase: WriteStationsProvider, StationsStreamProvider {
-        var stations: any AsyncSequence<[TTStation], any Error> {
+    actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider {
+        private var lastStations: [TTStation] = []
+        nonisolated var stations: any AsyncSequence<[TTStation], any Error> {
             _stations
         }
         func writeStations(_ stations: [TTStation]) async throws {
+            lastStations = stations
             continuation.yield(stations.sorted { lhs, rhs in
                 (lhs.normalizedName ?? lhs.normalizedCode) < (rhs.normalizedName ?? rhs.normalizedCode)
             })
+        }
+        func updateStation(code: String,
+                           isFavorite: Bool?) async throws {
+            let index = lastStations.firstIndex { station in
+                station.code == code
+            }
+            if let index {
+                var stations = lastStations
+                var station = stations[index]
+                station.isFavorite = isFavorite
+                stations[index] = station
+                try await writeStations(stations)
+            }
         }
         private let _stations: AsyncThrowingStream<[TTStation], any Error>
         let continuation: AsyncThrowingStream<[TTStation], any Error>.Continuation

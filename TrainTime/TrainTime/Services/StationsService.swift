@@ -1,3 +1,4 @@
+import Foundation
 import GRDB
 import os
 import SwiftConcurrencySerialQueue
@@ -10,16 +11,35 @@ extension TTClient: FetchAllStationsProvider {}
 
 protocol WriteStationsProvider: Sendable {
     func writeStations(_: [TTStation]) async throws -> Void
+    func updateStation(code: String,
+                       isFavorite: Bool?) async throws -> Void
 }
 
 extension DatabasePool: WriteStationsProvider {
-    func writeStations(_ stations: [TTStation]) async throws -> Void {
+    func writeStations(_ stations: [TTStation]) async throws {
         try await write { db in
             let codes = Set(stations.map(\.code))
             try TTStation
-                    .filter(!codes.contains(TTStation.Columns.code))
-                    .deleteAll(db)
+                .filter(!codes.contains(TTStation.Columns.code))
+                .deleteAll(db)
             try stations.forEach { try $0.upsert(db) }
+        }
+    }
+    func updateStation(code: String,
+                       isFavorite: Bool?) async throws {
+        try await write { db in
+            let station = try TTStation
+                .filter(TTStation.Columns.code == code)
+                .fetchOne(db)
+            if var station {
+                do {
+                    station.isFavorite = isFavorite
+                    try station.update(db)
+                } catch {
+                    Logger.database.error("Station not updated \(code) - \(String(describing: isFavorite)) - \(error.localizedDescription)")
+                    throw error
+                }
+            }
         }
     }
 }
@@ -33,10 +53,12 @@ extension DatabasePool: StationsStreamProvider {
         ValueObservation
             .tracking { db in
                 try TTStation
-                    .order(sql: "COALESCE(normalizedName, normalizedCode) COLLATE NOCASE ASC")
+                    .order(sql: """
+                                COALESCE(isFavorite, 0) DESC, 
+                                COALESCE(normalizedName, normalizedCode) ASC
+                                """)
                     .fetchAll(db)
             }
-            //.print()
             .values(in: self)
     }
 }
@@ -67,6 +89,12 @@ struct StationsService {
             }
         Logger.service.debug("Saving stations")
         try await writeStationsProvider.writeStations(Array(stations.values))
+    }
+    func updateStation(code: String,
+                       isFavorite: Bool?) async throws {
+        try await writeStationsProvider
+            .updateStation(code: code,
+                           isFavorite: isFavorite)
     }
     var stations: any AsyncSequence<[TTStation], any Error> {
         stationsStreamProvider.stations

@@ -34,7 +34,7 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
     let normalizedCity: String?
     // MARK: - User data
     ///
-    let isFavorite: Bool?
+    var isFavorite: Bool?
     // MARK: - Debugging
     ///
     var debugDescription: String {
