@@ -3,9 +3,6 @@ import GRDB
 
 extension TTStation: TableRecord {
     static let databaseTableName = "station"
-}
-
-extension TTStation {
     enum Columns {
         static let code = Column("code")
         static let name = Column("name")
@@ -21,6 +18,12 @@ extension TTStation {
         static let normalizedName = Column("normalizedName")
         static let normalizedCity = Column("normalizedCity")
         static let isFavorite = Column("isFavorite")
+    }
+}
+
+extension TTStation: Identifiable {
+    var id: String {
+        code
     }
 }
 

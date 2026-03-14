@@ -58,6 +58,7 @@ struct StationList: View {
                                                 isFavorite: !(row.station.isFavorite ?? false))
                         }
                     })
+                        .disabled(row.station.trainIdentifiers.isEmpty)
                 }
                 .navigationTitle("Stations")
                 .searchable(text: $state.query,
@@ -75,6 +76,8 @@ struct StationList: View {
     }
 }
 
+#if DEBUG
 #Preview {
-    StationList(component: StationListComponent.previewComponent())
+    StationList(component: PreviewAppComponent().makeStationListComponent())
 }
+#endif // DEBUG

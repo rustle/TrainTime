@@ -3,6 +3,8 @@ import GRDB
 import os
 import SwiftConcurrencySerialQueue
 
+typealias AnyThrowingSendableSequence<V: Sendable> = any AsyncSequence<V, any Error> & Sendable
+
 protocol FetchAllStationsProvider: Sendable {
     func fetchAllStations() async throws -> TTStationResponse
 }
@@ -45,11 +47,11 @@ extension DatabasePool: WriteStationsProvider {
 }
 
 protocol StationsStreamProvider: Sendable {
-    var stations: any AsyncSequence<[TTStation], any Error> { get }
+    func stations() async throws -> AnyThrowingSendableSequence<[TTStation]>
 }
 
 extension DatabasePool: StationsStreamProvider {
-    var stations: any AsyncSequence<[TTStation], any Error> {
+    func stations() async throws -> AnyThrowingSendableSequence<[TTStation]> {
         ValueObservation
             .tracking { db in
                 try TTStation
@@ -63,13 +65,7 @@ extension DatabasePool: StationsStreamProvider {
     }
 }
 
-struct StationsService {
-    init(client: TTClient,
-         databaseConnection: DatabasePool) {
-        self.fetchAllStationsProvider = client
-        self.writeStationsProvider = databaseConnection
-        self.stationsStreamProvider = databaseConnection
-    }
+struct StationsService: Sendable {
     private let fetchAllStationsProvider: FetchAllStationsProvider
     private let writeStationsProvider: WriteStationsProvider
     private let stationsStreamProvider: StationsStreamProvider
@@ -96,7 +92,7 @@ struct StationsService {
             .updateStation(code: code,
                            isFavorite: isFavorite)
     }
-    var stations: any AsyncSequence<[TTStation], any Error> {
-        stationsStreamProvider.stations
+    func stations() async throws -> any AsyncSequence<[TTStation], any Error> & Sendable {
+        try await stationsStreamProvider.stations()
     }
 }

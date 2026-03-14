@@ -1,9 +1,11 @@
 import GRDB
 
 protocol StationDependency: Sendable {
-    var client: TTClient { get }
+    var stationService: StationService { get }
+    var trainService: TrainService { get }
 }
 
 struct StationComponent: StationDependency {
-    let client: TTClient
+    let stationService: StationService
+    let trainService: TrainService
 }

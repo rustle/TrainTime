@@ -39,7 +39,6 @@ class StationListState {
     private let search = Search<[StationRow]>(initialValue: []) { query, rows in
         rows.search(query: query)
     }
-    private let loadQueue = SerialQueueThrowing()
     @ObservationIgnored private var loadDebounce: Debounce<Void>?
     func load() async throws {
         Logger.viewState.debug("StationListState: load()")
@@ -47,8 +46,8 @@ class StationListState {
     }
     private func _load() async {
         do {
-            try await component.service.load()
-            observeDatabaseIfNeeded()
+            try await observeDatabaseIfNeeded()
+            try await component.stationsService.load()
         } catch {
             Logger.viewState.error("StationListState: load() error \(error)")
         }
@@ -64,7 +63,7 @@ class StationListState {
     private func _updateStation(code: String,
                                 isFavorite: Bool?) async {
         do {
-            try await component.service
+            try await component.stationsService
                 .updateStation(code: code,
                                isFavorite: isFavorite)
         } catch {
@@ -72,11 +71,11 @@ class StationListState {
         }
     }
     private var rowsTask: Task<Void, any Error>?
-    private func observeDatabaseIfNeeded() {
+    private func observeDatabaseIfNeeded() async throws {
         guard rowsTask == nil else {
             return
         }
-        let stationsStream = self.component.service.stations
+        let stationsStream = try await self.component.stationsService.stations()
         rowsTask = Task { @MainActor in
             for try await stations in stationsStream {
                 update(allRows: stations.map(StationRow.init(station:)))

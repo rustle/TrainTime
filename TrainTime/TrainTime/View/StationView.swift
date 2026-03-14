@@ -26,13 +26,19 @@ struct StationView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationView {
         StationView(
-            state: .init(station: .init(name: "Utica",
-                                        code: "UCA",
-                                        trainIdentifiers: ["48-1"]),
-                         component: StationComponent(client: TTClient()))
+            state: .init(
+                station: .init(
+                    name: "Utica",
+                    code: "UCA",
+                    trainIdentifiers: ["48-1"]
+                ),
+                component: PreviewAppComponent().makeStationListComponent().makeStationComponent()
+            )
         )
     }
 }
+#endif // DEBUG

@@ -6,33 +6,35 @@ typealias StopStatus = StationStatus
 
 ///
 struct Stop: Codable, Sendable, Equatable, CustomDebugStringConvertible {
+    /// Station code
+    let code: String
     /// Scheduled arrival time
-    public let schArr: Date
+    let schArr: Date
     /// Scheduled departure time
-    public let schDep: Date
+    let schDep: Date
     /// Actual arrival time
-    public let arr: Date?
+    let arr: Date?
     /// Actual departure time
-    public let dep: Date?
+    let dep: Date?
     /// Platform name/number, if available
-    public let platform: String?
+    let platform: String?
     /// One of "Enroute", "Station", "Departed", or "Unknown"
-    public let status: StopStatus?
+    let status: StopStatus?
     ///
     var debugDescription: String {
         JSONEncoder.jsonDebugDescription(for: self) ?? "Stop"
     }
     ///
-    public init(name: String,
-                code: String,
-                tz: String? = nil,
-                bus: Bool? = nil,
-                schArr: Date,
-                schDep: Date,
-                arr: Date? = nil,
-                dep: Date? = nil,
-                platform: String? = nil,
-                status: StopStatus? = nil) {
+    init(code: String,
+         tz: String? = nil,
+         bus: Bool? = nil,
+         schArr: Date,
+         schDep: Date,
+         arr: Date? = nil,
+         dep: Date? = nil,
+         platform: String? = nil,
+         status: StopStatus? = nil) {
+        self.code = code
         self.schArr = schArr
         self.schDep = schDep
         self.arr = arr
@@ -42,6 +44,7 @@ struct Stop: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     }
     ///
     init(station: Station) {
+        code = station.code
         schArr = station.schArr
         schDep = station.schDep
         arr = station.arr

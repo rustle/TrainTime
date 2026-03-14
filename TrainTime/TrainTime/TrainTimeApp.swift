@@ -6,11 +6,7 @@ struct TrainTimeApp: App {
     @State var stationListComponent: StationListComponent?
     private func setup() async {
         do {
-            let database = Database(name: "train.db")
-            let connection = try database.newConnection()
-            try await database.runMigrations(connection)
-            let appComponent = AppComponent(database: database,
-                                            databaseConnection: connection)
+            let appComponent = try await AppComponent.makeProductionAppComponent()
             self.appComponent = appComponent
             self.stationListComponent = appComponent.makeStationListComponent()
         } catch {

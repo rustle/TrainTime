@@ -17,7 +17,7 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     /// Longitude of the train
     let lon: Double?
     ///
-    let stops: [String:Stop]
+    var stops: [String:Stop]
     /// Calculated icon color for the frontend
     let iconColor: String?
     /// Direction the train is heading in the 8 cardinal directions/
