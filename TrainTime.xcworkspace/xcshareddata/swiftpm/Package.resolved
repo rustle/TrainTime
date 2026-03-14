@@ -1,13 +1,22 @@
 {
-  "originHash" : "de6af2144d32ffc6fe5b7229c6ed4897e621d0d8ea208261c05ab110d438d6bb",
+  "originHash" : "b06a4b45ca3528264db85c7e7294bdc937c3a9f3ed5fafc61dcc6be5264a120d",
   "pins" : [
     {
       "identity" : "amtrak",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rustle/Amtrak.git",
       "state" : {
-        "revision" : "5edfcf5ff8a8cca18a66294ca372f3ec48a301bb",
-        "version" : "0.1.0"
+        "revision" : "af65a1eecd57e0ddb09c893e4e46946a15a192fc",
+        "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "grdb.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/groue/GRDB.swift.git",
+      "state" : {
+        "revision" : "36e30a6f1ef10e4194f6af0cff90888526f0c115",
+        "version" : "7.10.0"
       }
     },
     {
