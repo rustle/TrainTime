@@ -1,13 +1,12 @@
 import Amtrak
 import Foundation
-import Synchronization
 import os
 import Observation
 import SwiftConcurrencySerialQueue
 
 @MainActor
 @Observable
-class StationViewState {
+final class StationViewState {
     private(set) var station: TTStation
     var title: String {
         station.name ?? station.code

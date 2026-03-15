@@ -6,7 +6,7 @@ import SwiftConcurrencySerialQueue
 
 @MainActor
 @Observable
-class StationListState {
+final class StationListState {
     var selectedStation: StationRow?
     private(set) var allRows: [StationRow] = []
     private(set) var filteredRows: [StationRow]?
