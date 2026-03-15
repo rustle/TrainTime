@@ -3,13 +3,13 @@ import Testing
 
 struct TrainTimeTests {
     @Test func fetchAllStationsContainsUCA() async throws {
-        let client = TestClient()
-        let stations = try await client.fetchAllStations()
+        let apiService = TestAPIService()
+        let stations = try await apiService.fetchAllStations()
         #expect(stations["UCA"] == .ucaFixture)
     }
     @Test func fetchStationUCA() async throws {
-        let client = TestClient()
-        let station = try await client.fetchStation(id: "UCA")
+        let apiService = TestAPIService()
+        let station = try await apiService.fetchStation(id: "UCA")
         #expect(station == .ucaFixture)
     }
     @Test func stationsServiceLoadsAllStations() async throws {
@@ -18,7 +18,7 @@ struct TrainTimeTests {
         try await testDB.database.runMigrations(testDB.connection)
 
         let service = StationsService(
-            fetchAllStationsProvider: TestClient(),
+            fetchAllStationsProvider: TestAPIService(),
             writeStationsProvider: testDB.connection,
             stationsStreamProvider: testDB.connection
         )
@@ -36,14 +36,14 @@ struct TrainTimeTests {
         defer { try? testDB.closeAndDelete() }
         try await testDB.database.runMigrations(testDB.connection)
 
-        let client = TestClient()
+        let apiService = TestAPIService()
         let stationService = StationService(
-            fetchStationProvider: client,
+            fetchStationProvider: apiService,
             writeStationProvider: testDB.connection,
             stationStreamProvider: testDB.connection
         )
         let trainService = TrainService(
-            fetchTrainProvider: client,
+            fetchTrainProvider: apiService,
             writeTrainsProvider: testDB.connection,
             trainsStreamProvider: testDB.connection
         )
@@ -69,7 +69,7 @@ struct TrainTimeTests {
         try await testDB.database.runMigrations(testDB.connection)
 
         let trainService = TrainService(
-            fetchTrainProvider: TestClient(),
+            fetchTrainProvider: TestAPIService(),
             writeTrainsProvider: testDB.connection,
             trainsStreamProvider: testDB.connection
         )
@@ -92,7 +92,7 @@ struct TrainTimeTests {
         try await testDB.database.runMigrations(testDB.connection)
 
         let trainService = TrainService(
-            fetchTrainProvider: TestClient(),
+            fetchTrainProvider: TestAPIService(),
             writeTrainsProvider: testDB.connection,
             trainsStreamProvider: testDB.connection
         )

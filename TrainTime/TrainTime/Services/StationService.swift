@@ -5,7 +5,7 @@ protocol FetchStationProvider: Sendable {
     func fetchStation(id: String) async throws -> TTStation
 }
 
-extension TTClient: FetchStationProvider {}
+extension APIService: FetchStationProvider {}
 
 protocol WriteStationProvider: Sendable {
     func writeStation(_: TTStation) async throws -> Void

@@ -1,7 +1,7 @@
 import Amtrak
 @testable import TrainTime
 
-// MARK: - TestClient
+// MARK: - TestAPIService
 
 private let allStations: TTStationResponse = [
     "UCA": .ucaFixture,
@@ -19,7 +19,7 @@ private let allTrains: [String: TTTrain] = [
     "284-2": .train284Fixture,
 ]
 
-final class TestClient: Sendable, FetchAllStationsProvider, FetchStationProvider, FetchTrainProvider {
+final class TestAPIService: Sendable, FetchAllStationsProvider, FetchStationProvider, FetchTrainProvider {
     func fetchAllStations() async throws -> TrainTime.TTStationResponse {
         allStations
     }

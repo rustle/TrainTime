@@ -10,39 +10,39 @@ struct AppComponent: AppDependency {
         let connection = try database.newConnection()
         try await database.runMigrations(connection)
         return AppComponent {
-            TTClient()
+            APIService()
         } databaseFactory: {
             (database, connection)
         }
     }
-    let client: TTClient
+    let apiService: APIService
     let database: Database
     let databaseConnection: DatabasePool
     func makeStationListComponent() -> StationListComponent {
         StationListComponent(
             stationsService: .init(
-                fetchAllStationsProvider: client,
+                fetchAllStationsProvider: apiService,
                 writeStationsProvider: databaseConnection,
                 stationsStreamProvider: databaseConnection
             )
         ) {
             StationComponent(
                 stationService: .init(
-                    fetchStationProvider: client,
+                    fetchStationProvider: apiService,
                     writeStationProvider: databaseConnection,
                     stationStreamProvider: databaseConnection
                 ),
                 trainService: .init(
-                    fetchTrainProvider: client,
+                    fetchTrainProvider: apiService,
                     writeTrainsProvider: databaseConnection,
                     trainsStreamProvider: databaseConnection
                 )
             )
         }
     }
-    init(clientFactory: () -> TTClient,
+    init(apiServiceFactory: () -> APIService,
          databaseFactory: () -> (Database, DatabasePool)) {
-        self.client = clientFactory()
+        self.apiService = apiServiceFactory()
         let (database, databaseConnection) = databaseFactory()
         self.database = database
         self.databaseConnection = databaseConnection
@@ -114,20 +114,20 @@ struct PreviewAppComponent: AppDependency {
         }
     }
     func makeStationListComponent() -> StationListComponent {
-        let previewClient = TTClient()
+        let previewAPIService = APIService()
         let previewDatabase = PreviewDatabase()
         let stationsService = StationsService(
-            fetchAllStationsProvider: previewClient,
+            fetchAllStationsProvider: previewAPIService,
             writeStationsProvider: previewDatabase,
             stationsStreamProvider: previewDatabase
         )
         let stationService = StationService(
-            fetchStationProvider: previewClient,
+            fetchStationProvider: previewAPIService,
             writeStationProvider: previewDatabase,
             stationStreamProvider: previewDatabase
         )
         let trainService = TrainService(
-            fetchTrainProvider: previewClient,
+            fetchTrainProvider: previewAPIService,
             writeTrainsProvider: previewDatabase,
             trainsStreamProvider: previewDatabase
         )

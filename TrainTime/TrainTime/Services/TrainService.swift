@@ -5,7 +5,7 @@ protocol FetchTrainProvider: Sendable {
     func fetchTrain(id: String) async throws -> TTTrain
 }
 
-extension TTClient: FetchTrainProvider {}
+extension APIService: FetchTrainProvider {}
 
 struct FetchTrainsProvider: Sendable {
     let fetchTrainProvider: FetchTrainProvider

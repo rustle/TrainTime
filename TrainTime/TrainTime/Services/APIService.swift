@@ -1,6 +1,6 @@
 import Amtrak
 
-final class TTClient: Sendable {
+final class APIService: Sendable {
     private let client = Client()
     func fetchAllStations() async throws -> TTStationResponse {
         let response = try await client.fetchAllStations()

@@ -7,7 +7,7 @@ protocol FetchAllStationsProvider: Sendable {
     func fetchAllStations() async throws -> TTStationResponse
 }
 
-extension TTClient: FetchAllStationsProvider {}
+extension APIService: FetchAllStationsProvider {}
 
 protocol WriteStationsProvider: Sendable {
     func writeStations(_: [TTStation]) async throws -> Void
