@@ -2,6 +2,8 @@ import os
 
 extension Logger {
     private static let subsystem = "TrainTime"
+    static let app = Logger(subsystem: subsystem,
+                            category: "app")
     static let database = Logger(subsystem: subsystem,
                                  category: "database")
     static let service = Logger(subsystem: subsystem,

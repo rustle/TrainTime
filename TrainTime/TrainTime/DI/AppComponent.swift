@@ -5,6 +5,9 @@ protocol AppDependency: Sendable {
 }
 
 struct AppComponent: AppDependency {
+    static func deleteProductionDatabase() {
+        Database.deleteIfExists(name: "train.db")
+    }
     static func makeProductionAppComponent() async throws -> Self {
         let database = Database(name: "train.db")
         let connection = try database.newConnection()
