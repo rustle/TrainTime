@@ -14,26 +14,39 @@ struct FetchTrainsProvider: Sendable {
     }
     func fetchTrains(batchSize: Int,
                      identifiers: [String]) async throws -> [TTTrain] {
-        // TODO: Retry with backoff
         var trains = [TTTrain]()
         trains.reserveCapacity(identifiers.count)
-        try await withThrowingTaskGroup(of: TTTrain.self) { group in
+        try await withThrowingTaskGroup(of: TTTrain?.self) { group in
             var index = 0
             while index < identifiers.count && index < batchSize {
                 let id = identifiers[index]
                 group.addTask {
-                    try await fetchTrainProvider
-                        .fetchTrain(id: id)
+                    do {
+                        return try await withRetry(attempts: 3,
+                                                   initialBackoff: .milliseconds(500)) { _ in
+                            try await fetchTrainProvider.fetchTrain(id: id)
+                        }
+                    } catch {
+                        Logger.service.error("Failed to fetch train \(id) after retries: \(error)")
+                        return nil
+                    }
                 }
                 index += 1
             }
             while let train = try await group.next() {
-                trains.append(train)
+                if let train { trains.append(train) }
                 if index < identifiers.count {
                     let id = identifiers[index]
                     group.addTask {
-                        try await fetchTrainProvider
-                            .fetchTrain(id: id)
+                        do {
+                            return try await withRetry(attempts: 3,
+                                                       initialBackoff: .milliseconds(500)) { _ in
+                                try await fetchTrainProvider.fetchTrain(id: id)
+                            }
+                        } catch {
+                            Logger.service.error("Failed to fetch train \(id) after retries: \(error)")
+                            return nil
+                        }
                     }
                     index += 1
                 }
