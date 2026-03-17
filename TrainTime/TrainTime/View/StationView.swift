@@ -17,6 +17,15 @@ struct StationView: View {
         ListContainer(trains: state.trains,
                       stationCode: state.station.code)
             .navigationTitle(state.title)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink(destination: {
+                        StationLocationView(station: state.station)
+                    }, label: {
+                        Image(systemName: "map")
+                    })
+                }
+            }
             .refreshable {
                 try? await state.load(refreshStation: true)
             }

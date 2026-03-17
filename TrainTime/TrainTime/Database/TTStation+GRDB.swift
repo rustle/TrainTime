@@ -18,6 +18,7 @@ extension TTStation: TableRecord {
         static let normalizedName = Column("normalizedName")
         static let normalizedCity = Column("normalizedCity")
         static let isFavorite = Column("isFavorite")
+        static let formattedPostalAddress = Column("formattedPostalAddress")
     }
 }
 
@@ -38,6 +39,7 @@ extension TTStation: FetchableRecord {
         address2 = row[Columns.address2]
         city = row[Columns.city]
         zip = row[Columns.zip]
+        formattedPostalAddress = row[Columns.formattedPostalAddress]
         trainIdentifiers = try JSONDecoder().decode([String].self, from: row[Columns.trainIdentifiers])
         normalizedCode = row[Columns.normalizedCode]
         normalizedName = row[Columns.normalizedName]
@@ -57,6 +59,7 @@ extension TTStation: PersistableRecord {
         container[Columns.address2] = address2
         container[Columns.city] = city
         container[Columns.zip] = zip
+        container[Columns.formattedPostalAddress] = formattedPostalAddress
         container[Columns.trainIdentifiers] = try JSONEncoder().encode(trainIdentifiers)
         container[Columns.normalizedCode] = normalizedCode
         container[Columns.normalizedName] = normalizedName

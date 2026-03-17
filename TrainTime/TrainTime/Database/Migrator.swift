@@ -27,6 +27,7 @@ actor Migrator {
                 t.column(TTStation.Columns.address2.name, .text)
                 t.column(TTStation.Columns.city.name, .text)
                 t.column(TTStation.Columns.zip.name, .text)
+                t.column(TTStation.Columns.formattedPostalAddress.name, .text)
                 t.column(TTStation.Columns.trainIdentifiers.name, .text).notNull()
                 t.column(TTStation.Columns.normalizedCode.name, .text)
                 t.column(TTStation.Columns.normalizedName.name, .text)

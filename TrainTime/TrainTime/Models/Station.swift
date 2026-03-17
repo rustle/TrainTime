@@ -1,10 +1,32 @@
 import Amtrak
+import Contacts
+import CoreLocation
 import Foundation
 import GRDB
 import Observation
 
 ///
 struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvertible {
+    private static func formattedPostalAddress(
+        address1: String?,
+        address2: String?,
+        city: String?,
+        zip: String?
+    ) -> String {
+        let postalAddress = CNMutablePostalAddress()
+        let addressLines = [address1, address2].compactMap { $0 }
+        if !addressLines.isEmpty {
+            postalAddress.street = addressLines.joined(separator: "\n")
+        }
+        if let city {
+            postalAddress.city = city
+        }
+        if let zip {
+            postalAddress.postalCode = zip
+        }
+        let formatter = CNPostalAddressFormatter()
+        return formatter.string(from: postalAddress)
+    }
     ///
     let name: String?
     ///
@@ -25,6 +47,14 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
     let zip: String?
     ///
     let trainIdentifiers: [String]
+    var location: CLLocation? {
+        guard let lat, let lon else {
+            return nil
+        }
+        return .init(latitude: lat,
+                     longitude: lon)
+    }
+    let formattedPostalAddress: String
     // MARK: - Search
     ///
     let normalizedCode: String
@@ -70,6 +100,10 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         normalizedCity = city?.folding(options: options,
                                        locale: .current)
         isFavorite = nil
+        formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
+                                                             address2: address2,
+                                                             city: city,
+                                                             zip: zip)
     }
     /// init for mapping from Amtrak.StationMetadata
     init(stationMetadata: StationMetadata) {
@@ -91,6 +125,10 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         normalizedCity = stationMetadata.city?.folding(options: options,
                                                        locale: .current)
         isFavorite = nil
+        formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
+                                                             address2: address2,
+                                                             city: city,
+                                                             zip: zip)
     }
 }
 
