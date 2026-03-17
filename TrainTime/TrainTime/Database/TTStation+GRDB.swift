@@ -17,7 +17,6 @@ extension TTStation: TableRecord {
         static let normalizedCode = Column("normalizedCode")
         static let normalizedName = Column("normalizedName")
         static let normalizedCity = Column("normalizedCity")
-        static let isFavorite = Column("isFavorite")
         static let formattedPostalAddress = Column("formattedPostalAddress")
     }
 }
@@ -44,7 +43,7 @@ extension TTStation: FetchableRecord {
         normalizedCode = row[Columns.normalizedCode]
         normalizedName = row[Columns.normalizedName]
         normalizedCity = row[Columns.normalizedCity]
-        isFavorite = row[Columns.isFavorite]
+        isFavorite = nil
     }
 }
 
@@ -64,8 +63,5 @@ extension TTStation: PersistableRecord {
         container[Columns.normalizedCode] = normalizedCode
         container[Columns.normalizedName] = normalizedName
         container[Columns.normalizedCity] = normalizedCity
-        if let isFavorite {
-            container[Columns.isFavorite] = isFavorite
-        }
     }
 }

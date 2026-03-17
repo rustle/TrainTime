@@ -1,13 +1,18 @@
 import Foundation
 import GRDB
 
+protocol Migrator: Actor {
+    func runMigrations(_ pool: DatabasePool) throws
+}
+
+private enum MigrationState {
+    case waiting
+    case migrating
+    case done
+}
+
 ///
-actor Migrator {
-    private enum MigrationState {
-        case waiting
-        case migrating
-        case done
-    }
+actor CacheMigrator: Migrator {
     private var state = MigrationState.waiting
     private var migrator: DatabaseMigrator = .init()
     /// 
@@ -32,7 +37,6 @@ actor Migrator {
                 t.column(TTStation.Columns.normalizedCode.name, .text)
                 t.column(TTStation.Columns.normalizedName.name, .text)
                 t.column(TTStation.Columns.normalizedCity.name, .text)
-                t.column(TTStation.Columns.isFavorite.name, .boolean)
             }
             try db.create(table: TTTrain.databaseTableName) { t in
                 t.primaryKey(TTTrain.Columns.trainID.name, .text)
@@ -75,6 +79,27 @@ actor Migrator {
                 t.column(StopRecord.Columns.platform.name, .text)
                 t.column(StopRecord.Columns.status.name, .text)
                 t.primaryKey([StopRecord.Columns.trainID.name, StopRecord.Columns.stationCode.name])
+            }
+        }
+        try migrator.migrate(pool)
+        state = .done
+    }
+}
+
+///
+actor UserDataMigrator: Migrator {
+    private var state = MigrationState.waiting
+    private var migrator: DatabaseMigrator = .init()
+    ///
+    func runMigrations(_ pool: DatabasePool) throws {
+        guard state == .waiting else {
+            return
+        }
+        state = .migrating
+        migrator.registerMigration("v1") { db in
+            try db.create(table: StationUserData.databaseTableName) { t in
+                t.primaryKey(StationUserData.Columns.code.name, .text)
+                t.column(StationUserData.Columns.isFavorite.name, .boolean)
             }
         }
         try migrator.migrate(pool)

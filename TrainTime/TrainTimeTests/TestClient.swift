@@ -1,6 +1,18 @@
 import Amtrak
 @testable import TrainTime
 
+// MARK: - TestUserDataProvider
+
+final class TestUserDataProvider: UserDataStationsProvider, Sendable {
+    func updateStation(code: String, isFavorite: Bool?) async throws {}
+    func stationFavorites() async throws -> any AsyncThrowingSendableSequence<Set<String>> {
+        AsyncThrowingStream { continuation in
+            continuation.yield(Set())
+            continuation.finish()
+        }
+    }
+}
+
 // MARK: - TestAPIService
 
 private let allStations: TTStationResponse = [

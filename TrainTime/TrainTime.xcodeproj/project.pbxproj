@@ -11,6 +11,7 @@
 		914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 914204AE2F5C8C4300DC98CC /* Amtrak */; };
 		9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */ = {isa = PBXBuildFile; productRef = 9148C19D2F59290900858619 /* SwiftConcurrencySerialQueue */; };
 		91C0E63F2F56692400788690 /* Amtrak in Frameworks */ = {isa = PBXBuildFile; productRef = 91C0E63E2F56692400788690 /* Amtrak */; };
+		91ECDDDB2F68BD2200064E43 /* AsyncAlgorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 91ECDDDA2F68BD2200064E43 /* AsyncAlgorithms */; };
 		91F121C42F5FA52D003BD61B /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 91F121C32F5FA52D003BD61B /* GRDB */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,7 @@
 				914204AC2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue in Frameworks */,
 				914204AF2F5C8C4300DC98CC /* Amtrak in Frameworks */,
 				9148C19E2F59290900858619 /* SwiftConcurrencySerialQueue in Frameworks */,
+				91ECDDDB2F68BD2200064E43 /* AsyncAlgorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,6 +160,7 @@
 				914204AB2F5C8B2700DC98CC /* SwiftConcurrencySerialQueue */,
 				914204AE2F5C8C4300DC98CC /* Amtrak */,
 				91F121C32F5FA52D003BD61B /* GRDB */,
+				91ECDDDA2F68BD2200064E43 /* AsyncAlgorithms */,
 			);
 			productName = TrainTime;
 			productReference = 91C0E6072F56686500788690 /* TrainTime.app */;
@@ -245,6 +248,7 @@
 				914204AA2F5C8B2700DC98CC /* XCRemoteSwiftPackageReference "SwiftConcurrencySerialQueue" */,
 				914204AD2F5C8C4300DC98CC /* XCRemoteSwiftPackageReference "Amtrak" */,
 				91F121C22F5FA52D003BD61B /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				91ECDDD92F68BD2200064E43 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 91C0E6082F56686500788690 /* Products */;
@@ -488,6 +492,14 @@
 				minimumVersion = 0.1.0;
 			};
 		};
+		91ECDDD92F68BD2200064E43 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-async-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.3;
+			};
+		};
 		91F121C22F5FA52D003BD61B /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift.git";
@@ -516,6 +528,11 @@
 		91C0E63E2F56692400788690 /* Amtrak */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Amtrak;
+		};
+		91ECDDDA2F68BD2200064E43 /* AsyncAlgorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91ECDDD92F68BD2200064E43 /* XCRemoteSwiftPackageReference "swift-async-algorithms" */;
+			productName = AsyncAlgorithms;
 		};
 		91F121C32F5FA52D003BD61B /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;

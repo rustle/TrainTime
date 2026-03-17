@@ -1,3 +1,4 @@
+import Foundation
 import GRDB
 
 protocol AppDependency: Sendable {
@@ -5,58 +6,75 @@ protocol AppDependency: Sendable {
 }
 
 struct AppComponent: AppDependency {
-    static func deleteProductionDatabase() {
-        Database.deleteIfExists(name: "train.db")
+    static func deleteProductionCache() {
+        Database.deleteIfExists(name: "cache.db",
+                                directoryURL: URL.cachesDirectory)
     }
     static func makeProductionAppComponent() async throws -> Self {
-        let database = Database(name: "train.db")
-        let connection = try database.newConnection()
-        try await database.runMigrations(connection)
+        let cache = Database(name: "cache.db",
+                                directoryURL: URL.cachesDirectory,
+                                migrator: CacheMigrator())
+        let cacheConnection = try cache.newConnection()
+        try await cache.runMigrations(cacheConnection)
+        let userData = Database(name: "userdata.db",
+                                directoryURL: URL.documentsDirectory,
+                                migrator: UserDataMigrator())
+        let userDataConnection = try userData.newConnection()
+        try await userData.runMigrations(userDataConnection)
         return AppComponent {
             APIService()
         } databaseFactory: {
-            (database, connection)
+            (cache, cacheConnection,
+             userData, userDataConnection)
         }
     }
     let apiService: APIService
-    let database: Database
-    let databaseConnection: DatabasePool
+    let cache: Database
+    let cacheConnection: DatabasePool
+    let userData: Database
+    let userDataConnection: DatabasePool
     func makeStationListComponent() -> StationListComponent {
         StationListComponent(
             stationsService: .init(
                 fetchAllStationsProvider: apiService,
-                writeStationsProvider: databaseConnection,
-                stationsStreamProvider: databaseConnection
+                writeStationsProvider: cacheConnection,
+                stationsStreamProvider: cacheConnection,
+                userDataStationsProvider: userDataConnection
             )
         ) {
             StationComponent(
                 stationService: .init(
                     fetchStationProvider: apiService,
-                    writeStationProvider: databaseConnection,
-                    stationStreamProvider: databaseConnection
+                    writeStationProvider: cacheConnection,
+                    stationStreamProvider: cacheConnection
                 ),
                 trainService: .init(
                     fetchTrainProvider: apiService,
-                    writeTrainsProvider: databaseConnection,
-                    trainsStreamProvider: databaseConnection
+                    writeTrainsProvider: cacheConnection,
+                    trainsStreamProvider: cacheConnection
                 )
             )
         }
     }
     init(apiServiceFactory: () -> APIService,
-         databaseFactory: () -> (Database, DatabasePool)) {
+         databaseFactory: () -> (cache: Database, cacheConnection: DatabasePool,
+                                 userData: Database, userDataConnection: DatabasePool)) {
         self.apiService = apiServiceFactory()
-        let (database, databaseConnection) = databaseFactory()
-        self.database = database
-        self.databaseConnection = databaseConnection
+        let (cache, cacheConnection,
+             userData, userDataConnection) = databaseFactory()
+        self.cache = cache
+        self.cacheConnection = cacheConnection
+        self.userData = userData
+        self.userDataConnection = userDataConnection
     }
 }
 
 #if DEBUG
 struct PreviewAppComponent: AppDependency {
     // TODO: Try out DatabaseQueue and in memory DB
-    private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
+    private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, UserDataStationsProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
         private var lastStations: [TTStation] = []
+        private var lastFavorites: Set<String> = Set()
         private var trains: [String:TTTrain] = [:]
         func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
             _stations
@@ -69,16 +87,15 @@ struct PreviewAppComponent: AppDependency {
         }
         func updateStation(code: String,
                            isFavorite: Bool?) async throws {
-            let index = lastStations.firstIndex { station in
-                station.code == code
+            if isFavorite == true {
+                lastFavorites.insert(code)
+            } else {
+                lastFavorites.remove(code)
             }
-            if let index {
-                var stations = lastStations
-                var station = stations[index]
-                station.isFavorite = isFavorite
-                stations[index] = station
-                try await writeStations(stations)
-            }
+            _userDataContinuation.yield(lastFavorites)
+        }
+        func stationFavorites() async throws -> any AsyncThrowingSendableSequence<Set<String>> {
+            _userData
         }
         func writeStation(_ station: TTStation) async throws {
             let index = lastStations.firstIndex { nextStation in
@@ -104,13 +121,18 @@ struct PreviewAppComponent: AppDependency {
             fatalError()
         }
         private let _stations: AsyncThrowingStream<[TTStation], any Error>
+        private let _userData: AsyncThrowingStream<Set<String>, any Error>
         private let _station: AsyncThrowingStream<TTStation?, any Error>
         let _stationsContinuation: AsyncThrowingStream<[TTStation], any Error>.Continuation
+        let _userDataContinuation: AsyncThrowingStream<Set<String>, any Error>.Continuation
         let _stationContinuation: AsyncThrowingStream<TTStation?, any Error>.Continuation
         init() {
             let (stations, stationsContinuation) = AsyncThrowingStream<[TTStation], any Error>.makeStream()
             _stations = stations
-            self._stationsContinuation = stationsContinuation
+            _stationsContinuation = stationsContinuation
+            let (userData, userDataContinuation) = AsyncThrowingStream<Set<String>, any Error>.makeStream()
+            _userData = userData
+            _userDataContinuation = userDataContinuation
             let (station, stationContinuation) = AsyncThrowingStream<TTStation?, any Error>.makeStream()
             _station = station
             _stationContinuation = stationContinuation
@@ -122,7 +144,8 @@ struct PreviewAppComponent: AppDependency {
         let stationsService = StationsService(
             fetchAllStationsProvider: previewAPIService,
             writeStationsProvider: previewDatabase,
-            stationsStreamProvider: previewDatabase
+            stationsStreamProvider: previewDatabase,
+            userDataStationsProvider: previewDatabase
         )
         let stationService = StationService(
             fetchStationProvider: previewAPIService,

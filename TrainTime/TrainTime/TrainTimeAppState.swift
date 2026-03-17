@@ -44,7 +44,7 @@ final class TrainTimeAppState {
     }
 
     func resetAndReload() async {
-        AppComponent.deleteProductionDatabase()
+        AppComponent.deleteProductionCache()
         await load()
     }
 }
