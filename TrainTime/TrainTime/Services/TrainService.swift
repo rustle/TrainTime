@@ -94,7 +94,7 @@ extension DatabasePool: TrainsStreamProvider {
                         .filter(StopRecord.Columns.stationCode == stationCode)
                     trains = try TTTrain
                         .filter(ids: identifiers)
-                        .joining(optional: filteredStops)
+                        .joining(required: filteredStops)
                         .order(stopAlias[StopRecord.Columns.schArr])
                         .fetchAll(db)
                 } else {

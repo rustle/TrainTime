@@ -21,7 +21,7 @@ actor CacheMigrator: Migrator {
             return
         }
         state = .migrating
-        migrator.registerMigration("v1") { db in
+        migrator.registerMigration("cache-v1") { db in
             try db.create(table: TTStation.databaseTableName) { t in
                 t.primaryKey(TTStation.Columns.code.name, .text)
                 t.column(TTStation.Columns.name.name, .text)
@@ -96,7 +96,7 @@ actor UserDataMigrator: Migrator {
             return
         }
         state = .migrating
-        migrator.registerMigration("v1") { db in
+        migrator.registerMigration("userdata-v1") { db in
             try db.create(table: StationUserData.databaseTableName) { t in
                 t.primaryKey(StationUserData.Columns.code.name, .text)
                 t.column(StationUserData.Columns.isFavorite.name, .boolean)

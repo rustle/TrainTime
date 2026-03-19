@@ -38,13 +38,14 @@ struct TrainTimeTests {
     @Test func stationsServiceLoadsAllStations() async throws {
         let testDB = try TestDatabase.make()
         defer { try? testDB.closeAndDelete() }
-        try await testDB.database.runMigrations(testDB.connection)
+        try await testDB.runMigrations()
 
         let service = StationsService(
             fetchAllStationsProvider: TestAPIService(),
-            writeStationsProvider: testDB.connection,
-            stationsStreamProvider: testDB.connection,
-            userDataStationsProvider: TestUserDataProvider()
+            writeStationsProvider: testDB.cacheConnection,
+            stationsStreamProvider: StationsStreamDatabaseProvider(cacheConnection: testDB.cacheConnection,
+                                                                   userDataConnection: testDB.userDataConnection),
+            writeUserDataForStationProvider: TestUserDataProvider()
         )
 
         try await service.load()
@@ -59,18 +60,18 @@ struct TrainTimeTests {
     @Test func stationServiceLoadsUCAAndTrain48() async throws {
         let testDB = try TestDatabase.make()
         defer { try? testDB.closeAndDelete() }
-        try await testDB.database.runMigrations(testDB.connection)
+        try await testDB.runMigrations()
 
         let apiService = TestAPIService()
         let stationService = StationService(
             fetchStationProvider: apiService,
-            writeStationProvider: testDB.connection,
-            stationStreamProvider: testDB.connection
+            writeStationProvider: testDB.cacheConnection,
+            stationStreamProvider: testDB.cacheConnection
         )
         let trainService = TrainService(
             fetchTrainProvider: apiService,
-            writeTrainsProvider: testDB.connection,
-            trainsStreamProvider: testDB.connection
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
         )
 
         let ucaTrainIdentifiers = TTStation.ucaFixture.trainIdentifiers
@@ -94,12 +95,12 @@ struct TrainTimeTests {
     @Test func trainsStreamWithStationCodeOnlyLoadsStopForThatStation() async throws {
         let testDB = try TestDatabase.make()
         defer { try? testDB.closeAndDelete() }
-        try await testDB.database.runMigrations(testDB.connection)
+        try await testDB.runMigrations()
 
         let trainService = TrainService(
             fetchTrainProvider: TestAPIService(),
-            writeTrainsProvider: testDB.connection,
-            trainsStreamProvider: testDB.connection
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
         )
 
         let identifiers = TTStation.ucaFixture.trainIdentifiers
@@ -118,12 +119,12 @@ struct TrainTimeTests {
     @Test func trainsStreamWithoutStationCodeLoadsAllStops() async throws {
         let testDB = try TestDatabase.make()
         defer { try? testDB.closeAndDelete() }
-        try await testDB.database.runMigrations(testDB.connection)
+        try await testDB.runMigrations()
 
         let trainService = TrainService(
             fetchTrainProvider: TestAPIService(),
-            writeTrainsProvider: testDB.connection,
-            trainsStreamProvider: testDB.connection
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
         )
 
         try await trainService.load(identifiers: ["48-1"])

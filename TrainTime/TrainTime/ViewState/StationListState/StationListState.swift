@@ -20,8 +20,8 @@ final class StationListState {
         }
         isFavoriteDebounce = Debounce(duration: .milliseconds(150),
                                       tolerance: .milliseconds(100)) { [weak self] value, _ in
-            await self?._updateStation(code: value.0,
-                                       isFavorite: value.1)
+            await self?._writeUserDataForStation(code: value.0,
+                                                 isFavorite: value.1)
         }
         observe()
     }
@@ -56,16 +56,16 @@ final class StationListState {
         search.flush()
     }
     @ObservationIgnored private var isFavoriteDebounce: Debounce<(String, Bool?)>?
-    func updateStation(code: String,
-                       isFavorite: Bool?) {
+    func writeUserDataForStation(code: String,
+                                 isFavorite: Bool?) {
         isFavoriteDebounce?.emit(value: (code, isFavorite))
     }
-    private func _updateStation(code: String,
-                                isFavorite: Bool?) async {
+    private func _writeUserDataForStation(code: String,
+                                          isFavorite: Bool?) async {
         do {
             try await component.stationsService
-                .updateStation(code: code,
-                               isFavorite: isFavorite)
+                .writeUserDataForStation(code: code,
+                                         isFavorite: isFavorite)
         } catch {
             Logger.viewState.error("Failed to update isFavorite for \(code) - \(String(describing: isFavorite)) - \(error.localizedDescription)")
         }

@@ -12,8 +12,8 @@ struct AppComponent: AppDependency {
     }
     static func makeProductionAppComponent() async throws -> Self {
         let cache = Database(name: "cache.db",
-                                directoryURL: URL.cachesDirectory,
-                                migrator: CacheMigrator())
+                             directoryURL: URL.cachesDirectory,
+                             migrator: CacheMigrator())
         let cacheConnection = try cache.newConnection()
         try await cache.runMigrations(cacheConnection)
         let userData = Database(name: "userdata.db",
@@ -38,8 +38,11 @@ struct AppComponent: AppDependency {
             stationsService: .init(
                 fetchAllStationsProvider: apiService,
                 writeStationsProvider: cacheConnection,
-                stationsStreamProvider: cacheConnection,
-                userDataStationsProvider: userDataConnection
+                stationsStreamProvider: StationsStreamDatabaseProvider(
+                    cacheConnection: cacheConnection,
+                    userDataConnection: userDataConnection
+                ),
+                writeUserDataForStationProvider: userDataConnection
             )
         ) {
             StationComponent(
@@ -72,7 +75,7 @@ struct AppComponent: AppDependency {
 #if DEBUG
 struct PreviewAppComponent: AppDependency {
     // TODO: Try out DatabaseQueue and in memory DB
-    private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, UserDataStationsProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
+    private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, WriteUserDataForStationProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
         private var lastStations: [TTStation] = []
         private var lastFavorites: Set<String> = Set()
         private var trains: [String:TTTrain] = [:]
@@ -85,7 +88,7 @@ struct PreviewAppComponent: AppDependency {
                 (lhs.normalizedName ?? lhs.normalizedCode) < (rhs.normalizedName ?? rhs.normalizedCode)
             })
         }
-        func updateStation(code: String,
+        func writeUserDataForStation(code: String,
                            isFavorite: Bool?) async throws {
             if isFavorite == true {
                 lastFavorites.insert(code)
@@ -93,9 +96,6 @@ struct PreviewAppComponent: AppDependency {
                 lastFavorites.remove(code)
             }
             _userDataContinuation.yield(lastFavorites)
-        }
-        func stationFavorites() async throws -> any AsyncThrowingSendableSequence<Set<String>> {
-            _userData
         }
         func writeStation(_ station: TTStation) async throws {
             let index = lastStations.firstIndex { nextStation in
@@ -145,7 +145,7 @@ struct PreviewAppComponent: AppDependency {
             fetchAllStationsProvider: previewAPIService,
             writeStationsProvider: previewDatabase,
             stationsStreamProvider: previewDatabase,
-            userDataStationsProvider: previewDatabase
+            writeUserDataForStationProvider: previewDatabase
         )
         let stationService = StationService(
             fetchStationProvider: previewAPIService,

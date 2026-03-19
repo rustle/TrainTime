@@ -46,7 +46,7 @@ struct StationList: View {
         state = .init(component: component)
     }
     var body: some View {
-        //let _ = Self._printChanges()
+//        let _ = Self._printChanges()
         NavigationStack {
             List(state.filteredRows ?? state.allRows) { row in
                     NavigationLink(destination: {
@@ -54,8 +54,8 @@ struct StationList: View {
                                                  component: state.component.makeStationComponent()))
                     }, label: {
                         Row(row: row) {
-                            state.updateStation(code: row.station.code,
-                                                isFavorite: !(row.station.isFavorite ?? false))
+                            state.writeUserDataForStation(code: row.station.code,
+                                                          isFavorite: !(row.station.isFavorite ?? false))
                         }
                     })
                         .disabled(row.station.trainIdentifiers.isEmpty)

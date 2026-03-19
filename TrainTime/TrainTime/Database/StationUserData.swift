@@ -9,6 +9,7 @@ extension StationUserData: TableRecord {
     static let databaseTableName = "station"
     enum Columns {
         static let code = Column("code")
+        // See also TTStation.Columns.isFavorite
         static let isFavorite = Column("isFavorite")
     }
 }
