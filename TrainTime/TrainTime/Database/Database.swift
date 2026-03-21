@@ -1,6 +1,16 @@
 import Foundation
 import GRDB
 
+enum DatabaseIdentifier: Sendable {
+    case cache
+    case userData
+}
+
+struct DatabaseSetupError: Error, Sendable {
+    let database: DatabaseIdentifier
+    let underlying: Error
+}
+
 ///
 final class Database: Sendable {
     let name: String

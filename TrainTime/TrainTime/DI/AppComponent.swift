@@ -10,17 +10,33 @@ struct AppComponent: AppDependency {
         Database.deleteIfExists(name: "cache.db",
                                 directoryURL: URL.cachesDirectory)
     }
+    static func deleteProductionUserData() {
+        Database.deleteIfExists(name: "userdata.db",
+                                directoryURL: URL.documentsDirectory)
+    }
     static func makeProductionAppComponent() async throws -> Self {
         let cache = Database(name: "cache.db",
                              directoryURL: URL.cachesDirectory,
                              migrator: CacheMigrator())
-        let cacheConnection = try cache.newConnection()
-        try await cache.runMigrations(cacheConnection)
+        let cacheConnection: DatabasePool
+        do {
+            cacheConnection = try cache.newConnection()
+            try await cache.runMigrations(cacheConnection)
+        } catch {
+            throw DatabaseSetupError(database: .cache,
+                                     underlying: error)
+        }
         let userData = Database(name: "userdata.db",
                                 directoryURL: URL.documentsDirectory,
                                 migrator: UserDataMigrator())
-        let userDataConnection = try userData.newConnection()
-        try await userData.runMigrations(userDataConnection)
+        let userDataConnection: DatabasePool
+        do {
+            userDataConnection = try userData.newConnection()
+            try await userData.runMigrations(userDataConnection)
+        } catch {
+            throw DatabaseSetupError(database: .userData,
+                                     underlying: error)
+        }
         return AppComponent {
             APIService()
         } databaseFactory: {
