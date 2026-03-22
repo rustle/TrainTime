@@ -45,6 +45,7 @@ struct AppComponent: AppDependency {
         }
     }
     let apiService: APIService
+    let logExportService = LogExportService()
     let cache: Database
     let cacheConnection: DatabasePool
     let userData: Database
@@ -59,7 +60,8 @@ struct AppComponent: AppDependency {
                     userDataConnection: userDataConnection
                 ),
                 writeUserDataForStationProvider: userDataConnection
-            )
+            ),
+            logExportService: logExportService
         ) {
             StationComponent(
                 stationService: .init(
@@ -174,7 +176,9 @@ struct PreviewAppComponent: AppDependency {
             trainsStreamProvider: previewDatabase
         )
         return StationListComponent(
-            stationsService: stationsService) {
+            stationsService: stationsService,
+            logExportService: LogExportService()
+        ) {
                 StationComponent(stationService: stationService,
                                  trainService: trainService)
             }
