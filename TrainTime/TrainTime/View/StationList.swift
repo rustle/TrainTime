@@ -61,6 +61,29 @@ struct StationList: View {
                         .disabled(row.station.trainIdentifiers.isEmpty)
                 }
                 .navigationTitle("Stations")
+                .toolbar(id: "debug") {
+                    ToolbarItem(id: "sharedebuglogs",
+                                placement: .topBarTrailing) {
+                        switch state.debugToolBarItemState {
+                        case .show:
+                            Button("Share Logs",
+                                   systemImage: "ladybug") {
+                                state.prepareDebugLogExport(timeWindow: .last24Hours)
+                            }
+                        case .preparing(let progress):
+                            Gauge(value: progress.fractionCompleted) {
+                                Text("Exporting")
+                            }
+                                .gaugeStyle(.accessoryCircularCapacity)
+                                .tint(.accentColor)
+                        case .failed:
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                        case .hide:
+                            EmptyView()
+                        }
+                    }
+                }
                 .searchable(text: $state.query,
                             prompt: "Search Stations")
                 .onSubmit(of: .search) {

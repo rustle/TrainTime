@@ -5,6 +5,40 @@ import UIKit
 import UniformTypeIdentifiers
 
 struct LogExportService: Sendable {
+    struct LogExport: Transferable, Sendable {
+        let progress: Progress
+
+        static var transferRepresentation: some TransferRepresentation {
+            FileRepresentation(exportedContentType: .plainText) { logExport in
+                SentTransferredFile(try await logExport.generateFile())
+            }
+        }
+
+        func generateFile() async throws -> URL {
+            progress.completedUnitCount = 0
+            try Task.checkCancellation()
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("TrainTimeLogs.txt")
+            progress.completedUnitCount = 1
+            let logText = try await service.export(timeWindow: timeWindow)
+            try Task.checkCancellation()
+            progress.completedUnitCount = 2
+            try logText.write(to: url,
+                              atomically: true,
+                              encoding: .utf8)
+            progress.completedUnitCount = 3
+            return url
+        }
+
+        private let service: LogExportService
+        private let timeWindow: TimeWindow
+        fileprivate init(service: LogExportService,
+                         timeWindow: TimeWindow) {
+            self.service = service
+            self.timeWindow = timeWindow
+            progress = Progress(totalUnitCount: 3)
+            progress.kind = .file
+        }
+    }
     enum TimeWindow: Sendable {
         case lastHour
         case last24Hours
@@ -59,6 +93,11 @@ struct LogExportService: Sendable {
         encoder.dateEncodingStrategy = .iso8601
         let json = String(data: try encoder.encode(logEntries), encoding: .utf8) ?? "[]"
         return preamble + "\n\n------\n\n" + json
+    }
+
+    func transferable(timeWindow: TimeWindow = .last24Hours) -> LogExport {
+        LogExport(service: self,
+                  timeWindow: timeWindow)
     }
 }
 

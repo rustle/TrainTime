@@ -93,4 +93,65 @@ final class StationListState {
             }
         }
     }
+    // MARK - Logs
+    enum DebugToolBarItemState {
+        case hide
+        case show
+        case preparing(Progress)
+        case failed(Error)
+    }
+    private(set) var debugToolBarItemState: DebugToolBarItemState = .show
+    private(set) var fileToShare: URL?
+    @ObservationIgnored private var progressObservation: NSKeyValueObservation?
+    @ObservationIgnored private var exportTask: Task<Void, Never>?
+    @MainActor
+    func prepareDebugLogExport(timeWindow: LogExportService.TimeWindow) {
+        exportTask?.cancel()
+
+        let progress = Progress(totalUnitCount: 3)
+        debugToolBarItemState = .preparing(progress)
+
+        progressObservation = progress.observe(\.completedUnitCount) { [weak self] _, _ in
+            Task { @MainActor in
+                guard let self else {
+                    return
+                }
+                // Only update if we are still in the preparing state
+                if case .preparing = self.debugToolBarItemState {
+                    self.debugToolBarItemState = .preparing(progress)
+                }
+            }
+        }
+
+        exportTask = Task {
+            do {
+                try Task.checkCancellation()
+                let url = try await generateFile(timeWindow: timeWindow,
+                                                 progress: progress)
+                try Task.checkCancellation()
+                self.fileToShare = url
+                self.debugToolBarItemState = .show
+            } catch is CancellationError {
+            } catch {
+                self.debugToolBarItemState = .failed(error)
+                try? await Task.sleep(for: .seconds(3))
+                self.debugToolBarItemState = .show
+            }
+        }
+    }
+    private func generateFile(timeWindow: LogExportService.TimeWindow,
+                              progress: Progress) async throws -> URL {
+        progress.completedUnitCount = 0
+        try Task.checkCancellation()
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("TrainTimeLogs.txt")
+        progress.completedUnitCount = 1
+        let logText = try await component.logExportService.export(timeWindow: timeWindow)
+        try Task.checkCancellation()
+        progress.completedUnitCount = 2
+        try logText.write(to: url,
+                          atomically: true,
+                          encoding: .utf8)
+        progress.completedUnitCount = 3
+        return url
+    }
 }
