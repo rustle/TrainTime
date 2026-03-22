@@ -70,7 +70,7 @@ final class StationListState {
             Logger.viewState.error("Failed to update isFavorite for \(code) - \(String(describing: isFavorite)) - \(error.localizedDescription)")
         }
     }
-    private var rowsTask: Task<Void, any Error>?
+    @ObservationIgnored private var rowsTask: Task<Void, any Error>?
     private func observeDatabaseIfNeeded() async throws {
         guard rowsTask == nil else {
             return
