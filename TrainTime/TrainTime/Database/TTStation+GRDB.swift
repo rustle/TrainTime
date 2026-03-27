@@ -19,7 +19,7 @@ extension TTStation: TableRecord {
         static let normalizedCity = Column("normalizedCity")
         static let formattedPostalAddress = Column("formattedPostalAddress")
         // Used in init(row:) and to annotate an isFavorite column during fetch
-        // Not use in encode because it's persisted in it's own table/db
+        // Not used in encode because it's persisted in it's own table/db
         // See also StationUserData.Columns.isFavorite
         static let isFavorite = Column("isFavorite")
     }
