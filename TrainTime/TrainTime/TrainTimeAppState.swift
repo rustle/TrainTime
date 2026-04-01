@@ -49,7 +49,7 @@ final class TrainTimeAppState {
             self.appComponent = appComponent
             self.stationListComponent = appComponent.makeStationListComponent()
             return (.loaded, nil)
-        } catch where error is ClientError {
+        } catch where error is AmtrakClientError {
             Logger.app.error("App load failed (transient): \(error)")
             return (nil, .transient(error))
         } catch let error as DatabaseSetupError {

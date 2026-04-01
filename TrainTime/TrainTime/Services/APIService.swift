@@ -1,7 +1,7 @@
 import Amtrak
 
 final class APIService: Sendable {
-    private let client = Client()
+    private let client = AmtrakClient()
     func fetchAllStations() async throws -> TTStationResponse {
         let response = try await client.fetchAllStations()
         return response.reduce(into: [:]) { accumulator, keyValue in
