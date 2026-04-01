@@ -25,11 +25,11 @@ struct TrainTunnel: View {
                                           bounce: 0.2)) {
                         state.tunnelOffset = 0
                     } completion: {
-                        state.trainAnimationState.isRunning = true
+                        state.trainAnimationState.position = .there
                     }
                 }
-                .onChange(of: state.trainAnimationState.isComplete) { _, newValue in
-                    if newValue {
+                .onChange(of: state.trainAnimationState.isRunning) { _, newValue in
+                    if !newValue && state.trainAnimationState.position == .there {
                         state.isComplete = true
                     }
                 }

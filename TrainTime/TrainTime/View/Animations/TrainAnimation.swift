@@ -1,14 +1,19 @@
 import Observation
 import SwiftUI
 
+enum TrainPosition: Equatable {
+    case here
+    case there
+}
+
 @Observable
 final class TrainAnimationState {
     var middleCars: Int
     fileprivate var trackPhase: CGFloat = 0
     fileprivate var vibrate = false
     fileprivate var trainDriveAwayOffset: CGFloat = 0
-    var isRunning: Bool = false
-    fileprivate(set) var isComplete: Bool = false
+    var position: TrainPosition = .here
+    fileprivate(set) var isRunning: Bool = false
     init(middleCars: Int) {
         self.middleCars = middleCars
     }
@@ -81,7 +86,7 @@ struct TrainAnimation: View {
                 .foregroundStyle(Color.trainTracks)
                 .frame(height: 4)
                 .animation(
-                    state.isRunning ?
+                    state.position == .there ?
                         .default :
                         .linear(duration: 0.3)
                             .repeatForever(autoreverses: false),
@@ -97,9 +102,11 @@ struct TrainAnimation: View {
         } action: {
             containerWidth = $0
         }
-        .onChange(of: state.isRunning) { _, newValue in
-            if newValue {
+        .onChange(of: state.position) { _, newValue in
+            if newValue == .there {
                 driveAway()
+            } else if newValue == .here {
+                goBack()
             }
         }
         .onAppear {
@@ -109,6 +116,7 @@ struct TrainAnimation: View {
     }
 
     private func driveAway() {
+        state.isRunning = true
         withAnimation(.none) {
             state.vibrate = false
             state.trackPhase = 0
@@ -116,7 +124,20 @@ struct TrainAnimation: View {
         withAnimation {
             state.trainDriveAwayOffset = containerWidth
         } completion: {
-            state.isComplete = true
+            state.isRunning = false
+        }
+    }
+    
+    private func goBack() {
+        state.isRunning = true
+        withAnimation(.none) {
+            state.vibrate = true
+            state.trackPhase = 20
+        }
+        withAnimation {
+            state.trainDriveAwayOffset = 0
+        } completion: {
+            state.isRunning = false
         }
     }
 }
@@ -129,7 +150,15 @@ struct TrainAnimation: View {
         TrainAnimation(state: state)
         TrainAnimation(state: state)
     }
-    Button("Drive Away") {
-        state.isRunning = true
+    Button(state.position == .here ?
+        "Drive Away" :
+        "Go Back"
+    ) {
+        if state.position == .here {
+            state.position = .there
+        } else {
+            state.position = .here
+        }
     }
+    .disabled(state.isRunning)
 }
