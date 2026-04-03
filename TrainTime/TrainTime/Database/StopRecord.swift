@@ -29,19 +29,23 @@ struct StopRecord {
     }
 }
 
+extension Stop: FetchableRecord {
+    init(row: Row) throws {
+        code = row[StopRecord.Columns.stationCode]
+        schArr = row[StopRecord.Columns.schArr]
+        schDep = row[StopRecord.Columns.schDep]
+        arr = row[StopRecord.Columns.arr]
+        dep = row[StopRecord.Columns.dep]
+        platform = row[StopRecord.Columns.platform]
+        status = row[StopRecord.Columns.status]
+    }
+}
+
 extension StopRecord: FetchableRecord {
     init(row: Row) throws {
-        trainID = row["trainID"]
-        stationCode = row["stationCode"]
-        stop = Stop(
-            code: row["stationCode"],
-            schArr: row["schArr"],
-            schDep: row["schDep"],
-            arr: row["arr"],
-            dep: row["dep"],
-            platform: row["platform"],
-            status: row["status"]
-        )
+        trainID = row[Columns.trainID]
+        stationCode = row[Columns.stationCode]
+        stop = try Stop(row: row)
     }
 }
 

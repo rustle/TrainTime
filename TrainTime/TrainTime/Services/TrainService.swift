@@ -2,7 +2,8 @@ import GRDB
 import os
 
 protocol FetchTrainProvider: Sendable {
-    func fetchTrain(id: String) async throws -> TTTrain
+    func fetchTrain(identifier: String,
+                    at stop: String) async throws -> TrainAtStop
 }
 
 extension APIService: FetchTrainProvider {}
@@ -13,10 +14,11 @@ struct FetchTrainsProvider: Sendable {
         self.fetchTrainProvider = fetchTrainProvider
     }
     func fetchTrains(batchSize: Int,
-                     identifiers: [String]) async throws -> [TTTrain] {
-        var trains = [TTTrain]()
+                     identifiers: [String],
+                     at stop: String) async throws -> [TrainAtStop] {
+        var trains = [TrainAtStop]()
         trains.reserveCapacity(identifiers.count)
-        try await withThrowingTaskGroup(of: TTTrain?.self) { group in
+        try await withThrowingTaskGroup(of: TrainAtStop?.self) { group in
             var index = 0
             while index < identifiers.count && index < batchSize {
                 let id = identifiers[index]
@@ -24,7 +26,8 @@ struct FetchTrainsProvider: Sendable {
                     do {
                         return try await withRetry(attempts: 3,
                                                    initialBackoff: .milliseconds(500)) { _ in
-                            try await fetchTrainProvider.fetchTrain(id: id)
+                            try await fetchTrainProvider.fetchTrain(identifier: id,
+                                                                    at: stop)
                         }
                     } catch {
                         Logger.service.error("Failed to fetch train \(id) after retries: \(error)")
@@ -41,7 +44,8 @@ struct FetchTrainsProvider: Sendable {
                         do {
                             return try await withRetry(attempts: 3,
                                                        initialBackoff: .milliseconds(500)) { _ in
-                                try await fetchTrainProvider.fetchTrain(id: id)
+                                try await fetchTrainProvider.fetchTrain(identifier: id,
+                                                                        at: stop)
                             }
                         } catch {
                             Logger.service.error("Failed to fetch train \(id) after retries: \(error)")
@@ -57,20 +61,18 @@ struct FetchTrainsProvider: Sendable {
 }
 
 protocol WriteTrainsProvider: Sendable {
-    func writeTrains(_: [TTTrain]) async throws -> Void
+    func writeTrainAtStop(_: [TrainAtStop]) async throws -> Void
 }
 
 extension DatabasePool: WriteTrainsProvider {
-    func writeTrains(_ trains: [TTTrain]) async throws {
+    func writeTrainAtStop(_ trains: [TrainAtStop]) async throws {
         try await write { db in
             try trains.forEach { train in
-                try train.upsert(db)
-                try StopRecord
-                    .filter(StopRecord.Columns.trainID == train.trainID)
-                    .deleteAll(db)
-                try train.stops.forEach { stationCode, stop in
-                    try StopRecord(trainID: train.trainID, stationCode: stationCode, stop: stop).insert(db)
-                }
+                try train.train.upsert(db)
+                try StopRecord(trainID: train.train.trainID,
+                               stationCode: train.stop.code,
+                               stop: train.stop)
+                    .upsert(db)
             }
         }
     }
@@ -78,46 +80,26 @@ extension DatabasePool: WriteTrainsProvider {
 
 protocol TrainsStreamProvider: Sendable {
     func trains(identifiers: [String],
-                stationCode: String?) async throws -> any AsyncThrowingSendableSequence<[TTTrain]>
+                at stop: String) async throws -> any AsyncThrowingSendableSequence<[TrainAtStop]>
 }
 
 extension DatabasePool: TrainsStreamProvider {
     func trains(identifiers: [String],
-                stationCode: String?) async throws -> any AsyncThrowingSendableSequence<[TTTrain]> {
+                at stop: String) async throws -> any AsyncThrowingSendableSequence<[TrainAtStop]> {
         ValueObservation
             .tracking { db in
-                let trains: [TTTrain]
-                if let stationCode {
-                    let stopAlias = TableAlias()
-                    let filteredStops = TTTrain.stopRecords
+                let stopAlias = TableAlias()
+                let request = Train
+                    .filter(ids: identifiers)
+                    .including(required: Train.stopRecords
                         .aliased(stopAlias)
-                        .filter(StopRecord.Columns.stationCode == stationCode)
-                    trains = try TTTrain
-                        .filter(ids: identifiers)
-                        .joining(required: filteredStops)
+                        .filter(StopRecord.Columns.stationCode == stop)
                         .order(stopAlias[StopRecord.Columns.schArr])
-                        .fetchAll(db)
-                } else {
-                    trains = try TTTrain
-                        .filter(ids: identifiers)
-                        .fetchAll(db)
-                }
-                var stopFilter = identifiers.contains(StopRecord.Columns.trainID)
-                if let stationCode {
-                    stopFilter = stopFilter && StopRecord.Columns.stationCode == stationCode
-                }
-                let stopRecords = try StopRecord
-                    .filter(stopFilter)
-                    .fetchAll(db)
-                let stopsByTrainID = Dictionary(grouping: stopRecords, by: \.trainID)
-                return trains.map { train in
-                    var t = train
-                    t.stops = Dictionary(
-                        uniqueKeysWithValues: (stopsByTrainID[train.trainID] ?? [])
-                            .map { ($0.stationCode, $0.stop) }
+                        .forKey("stop")
                     )
-                    return t
-                }
+                return try TrainAtStop
+                    .fetchAll(db,
+                              request)
             }
             .values(in: self)
     }
@@ -142,15 +124,17 @@ struct TrainService: Sendable {
         self.trainsStreamProvider = trainsStreamProvider
     }
     func load(batchSize: Int = 3,
-              identifiers: [String]) async throws {
+              identifiers: [String],
+              at stop: String) async throws {
         let trains = try await fetchTrainsProvider
             .fetchTrains(batchSize: batchSize,
-                         identifiers: identifiers)
-        try await writeTrainsProvider.writeTrains(trains)
+                         identifiers: identifiers,
+                         at: stop)
+        try await writeTrainsProvider.writeTrainAtStop(trains)
     }
     func trains(identifiers: [String],
-                stationCode: String? = nil) async throws -> any AsyncThrowingSendableSequence<[TTTrain]> {
+                at stop: String) async throws -> any AsyncThrowingSendableSequence<[TrainAtStop]> {
         try await trainsStreamProvider.trains(identifiers: identifiers,
-                                              stationCode: stationCode)
+                                              at: stop)
     }
 }

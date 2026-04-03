@@ -6,10 +6,10 @@ func iso8601(_ string: String) -> Date {
     ISO8601DateFormatter().date(from: string)!
 }
 
-// MARK: - TTStation
+// MARK: - Station
 
-extension TTStation {
-    static let ucaFixture = TTStation(
+extension TrainTime.Station {
+    static let ucaFixture = Self(
         name: "Utica",
         code: "UCA",
         tz: "America/New_York",
@@ -21,7 +21,7 @@ extension TTStation {
         zip: "13501",
         trainIdentifiers: ["48-1", "63-2", "64-2", "280-2", "281-2", "284-2"]
     )
-    static let rocFixture = TTStation(
+    static let rocFixture = Self(
         name: "Rochester",
         code: "ROC",
         tz: "America/New_York",
@@ -33,7 +33,7 @@ extension TTStation {
         zip: "14605",
         trainIdentifiers: ["48-1", "63-2", "64-2", "280-2", "281-2", "284-2"]
     )
-    static let syrFixture = TTStation(
+    static let syrFixture = Self(
         name: "Syracuse",
         code: "SYR",
         tz: "America/New_York",
@@ -45,7 +45,7 @@ extension TTStation {
         zip: "13208",
         trainIdentifiers: ["48-1", "63-2", "64-2", "280-2", "281-2", "284-2"]
     )
-    static let nypFixture = TTStation(
+    static let nypFixture = Self(
         name: "New York Penn",
         code: "NYP",
         tz: "America/New_York",
@@ -59,11 +59,11 @@ extension TTStation {
     )
 }
 
-// MARK: - TTTrain
+// MARK: - Train
 
-extension TTTrain {
+extension TrainTime.Train {
     // Lake Shore Limited: Chicago → New York Penn
-    static let train48Fixture = TTTrain(
+    static let train48Fixture = Train(
         routeName: "Lake Shore Limited",
         trainNum: "48",
         trainNumRaw: "48",
@@ -71,28 +71,6 @@ extension TTTrain {
         lat: 43.054249778598034,
         lon: -76.63167817214746,
         iconColor: "#509e24",
-        stops: [
-            "CHI": Stop(code: "CHI", schArr: iso8601("2026-03-01T21:30:00-06:00"), schDep: iso8601("2026-03-01T21:30:00-06:00"), arr: iso8601("2026-03-01T21:30:00-06:00"), dep: iso8601("2026-03-01T21:30:00-06:00"), status: .Departed),
-            "SOB": Stop(code: "SOB", schArr: iso8601("2026-03-01T23:59:00-05:00"), schDep: iso8601("2026-03-01T23:59:00-05:00"), arr: iso8601("2026-03-02T00:39:00-05:00"), dep: iso8601("2026-03-02T00:41:00-05:00"), status: .Departed),
-            "EKH": Stop(code: "EKH", schArr: iso8601("2026-03-02T00:24:00-05:00"), schDep: iso8601("2026-03-02T00:27:00-05:00"), arr: iso8601("2026-03-02T01:01:00-05:00"), dep: iso8601("2026-03-02T01:03:00-05:00"), status: .Departed),
-            "WTI": Stop(code: "WTI", schArr: iso8601("2026-03-02T01:15:00-05:00"), schDep: iso8601("2026-03-02T01:20:00-05:00"), arr: iso8601("2026-03-02T01:52:00-05:00"), dep: iso8601("2026-03-02T01:57:00-05:00"), status: .Departed),
-            "BYN": Stop(code: "BYN", schArr: iso8601("2026-03-02T01:43:00-05:00"), schDep: iso8601("2026-03-02T01:45:00-05:00"), arr: iso8601("2026-03-02T02:22:00-05:00"), dep: iso8601("2026-03-02T02:24:00-05:00"), status: .Departed),
-            "TOL": Stop(code: "TOL", schArr: iso8601("2026-03-02T03:11:00-05:00"), schDep: iso8601("2026-03-02T03:31:00-05:00"), arr: iso8601("2026-03-02T03:24:00-05:00"), dep: iso8601("2026-03-02T03:34:00-05:00"), status: .Departed),
-            "SKY": Stop(code: "SKY", schArr: iso8601("2026-03-02T04:19:00-05:00"), schDep: iso8601("2026-03-02T04:23:00-05:00"), arr: iso8601("2026-03-02T04:21:00-05:00"), dep: iso8601("2026-03-02T04:25:00-05:00"), status: .Departed),
-            "ELY": Stop(code: "ELY", schArr: iso8601("2026-03-02T04:58:00-05:00"), schDep: iso8601("2026-03-02T05:02:00-05:00"), arr: iso8601("2026-03-02T04:59:00-05:00"), dep: iso8601("2026-03-02T05:02:00-05:00"), status: .Departed),
-            "CLE": Stop(code: "CLE", schArr: iso8601("2026-03-02T05:38:00-05:00"), schDep: iso8601("2026-03-02T05:50:00-05:00"), arr: iso8601("2026-03-02T05:50:00-05:00"), dep: iso8601("2026-03-02T06:01:00-05:00"), status: .Departed),
-            "ERI": Stop(code: "ERI", schArr: iso8601("2026-03-02T07:18:00-05:00"), schDep: iso8601("2026-03-02T07:24:00-05:00"), arr: iso8601("2026-03-02T07:27:00-05:00"), dep: iso8601("2026-03-02T07:34:00-05:00"), status: .Departed),
-            "BUF": Stop(code: "BUF", schArr: iso8601("2026-03-02T08:53:00-05:00"), schDep: iso8601("2026-03-02T09:05:00-05:00"), arr: iso8601("2026-03-02T09:18:00-05:00"), dep: iso8601("2026-03-02T09:36:00-05:00"), status: .Departed),
-            "ROC": Stop(code: "ROC", schArr: iso8601("2026-03-02T10:00:00-05:00"), schDep: iso8601("2026-03-02T10:06:00-05:00"), arr: iso8601("2026-03-02T10:25:00-05:00"), dep: iso8601("2026-03-02T10:31:00-05:00"), status: .Departed),
-            "SYR": Stop(code: "SYR", schArr: iso8601("2026-03-02T11:28:00-05:00"), schDep: iso8601("2026-03-02T11:42:00-05:00"), arr: iso8601("2026-03-02T11:41:00-05:00"), dep: iso8601("2026-03-02T11:41:00-05:00"), status: .enroute),
-            "UCA": Stop(code: "UCA", schArr: iso8601("2026-03-02T12:37:00-05:00"), schDep: iso8601("2026-03-02T12:42:00-05:00"), arr: iso8601("2026-03-02T12:37:00-05:00"), dep: iso8601("2026-03-02T12:37:00-05:00"), status: .enroute),
-            "SDY": Stop(code: "SDY", schArr: iso8601("2026-03-02T14:15:00-05:00"), schDep: iso8601("2026-03-02T14:21:00-05:00"), arr: iso8601("2026-03-02T14:15:00-05:00"), dep: iso8601("2026-03-02T14:15:00-05:00"), status: .enroute),
-            "ALB": Stop(code: "ALB", schArr: iso8601("2026-03-02T14:53:00-05:00"), schDep: iso8601("2026-03-02T16:10:00-05:00"), arr: iso8601("2026-03-02T14:53:00-05:00"), dep: iso8601("2026-03-02T14:53:00-05:00"), status: .enroute),
-            "RHI": Stop(code: "RHI", schArr: iso8601("2026-03-02T16:55:00-05:00"), schDep: iso8601("2026-03-02T16:55:00-05:00"), arr: iso8601("2026-03-02T16:57:00-05:00"), dep: iso8601("2026-03-02T16:57:00-05:00"), status: .enroute),
-            "POU": Stop(code: "POU", schArr: iso8601("2026-03-02T17:13:00-05:00"), schDep: iso8601("2026-03-02T17:13:00-05:00"), arr: iso8601("2026-03-02T17:09:00-05:00"), dep: iso8601("2026-03-02T17:09:00-05:00"), status: .enroute),
-            "CRT": Stop(code: "CRT", schArr: iso8601("2026-03-02T17:53:00-05:00"), schDep: iso8601("2026-03-02T17:53:00-05:00"), arr: iso8601("2026-03-02T17:51:00-05:00"), dep: iso8601("2026-03-02T17:51:00-05:00"), status: .enroute),
-            "NYP": Stop(code: "NYP", schArr: iso8601("2026-03-02T18:42:00-05:00"), schDep: iso8601("2026-03-02T18:42:00-05:00"), arr: iso8601("2026-03-02T18:33:00-05:00"), dep: iso8601("2026-03-02T18:33:00-05:00"), status: .enroute),
-        ],
         heading: .E,
         eventCode: "SYR",
         eventTZ: "America/New_York",
@@ -116,7 +94,7 @@ extension TTTrain {
     )
 
     // Maple Leaf: New York Penn → Toronto Union
-    static let train63Fixture = TTTrain(
+    static let train63Fixture = Train(
         routeName: "Maple Leaf",
         trainNum: "63",
         trainNumRaw: "63",
@@ -124,26 +102,6 @@ extension TTTrain {
         lat: 42.94720943367419,
         lon: -74.62390316101671,
         iconColor: "#2a893d",
-        stops: [
-            "NYP":  Stop(code: "NYP",  schArr: iso8601("2026-03-02T07:15:00-05:00"), schDep: iso8601("2026-03-02T07:15:00-05:00"), arr: iso8601("2026-03-02T07:15:00-05:00"), dep: iso8601("2026-03-02T07:15:00-05:00"), status: .Departed),
-            "YNY":  Stop(code: "YNY",  schArr: iso8601("2026-03-02T07:43:00-05:00"), schDep: iso8601("2026-03-02T07:44:00-05:00"), arr: iso8601("2026-03-02T07:37:00-05:00"), dep: iso8601("2026-03-02T07:44:00-05:00"), status: .Departed),
-            "CRT":  Stop(code: "CRT",  schArr: iso8601("2026-03-02T08:02:00-05:00"), schDep: iso8601("2026-03-02T08:03:00-05:00"), arr: iso8601("2026-03-02T08:03:00-05:00"), dep: iso8601("2026-03-02T08:05:00-05:00"), status: .Departed),
-            "POU":  Stop(code: "POU",  schArr: iso8601("2026-03-02T08:43:00-05:00"), schDep: iso8601("2026-03-02T08:45:00-05:00"), arr: iso8601("2026-03-02T08:41:00-05:00"), dep: iso8601("2026-03-02T08:45:00-05:00"), status: .Departed),
-            "RHI":  Stop(code: "RHI",  schArr: iso8601("2026-03-02T08:58:00-05:00"), schDep: iso8601("2026-03-02T09:00:00-05:00"), arr: iso8601("2026-03-02T09:00:00-05:00"), dep: iso8601("2026-03-02T09:02:00-05:00"), status: .Departed),
-            "HUD":  Stop(code: "HUD",  schArr: iso8601("2026-03-02T09:20:00-05:00"), schDep: iso8601("2026-03-02T09:21:00-05:00"), arr: iso8601("2026-03-02T09:25:00-05:00"), dep: iso8601("2026-03-02T09:26:00-05:00"), status: .Departed),
-            "ALB":  Stop(code: "ALB",  schArr: iso8601("2026-03-02T09:50:00-05:00"), schDep: iso8601("2026-03-02T10:10:00-05:00"), arr: iso8601("2026-03-02T09:53:00-05:00"), dep: iso8601("2026-03-02T10:10:00-05:00"), status: .Departed),
-            "SDY":  Stop(code: "SDY",  schArr: iso8601("2026-03-02T10:34:00-05:00"), schDep: iso8601("2026-03-02T10:34:00-05:00"), arr: iso8601("2026-03-02T10:32:00-05:00"), dep: iso8601("2026-03-02T10:34:00-05:00"), status: .Departed),
-            "AMS":  Stop(code: "AMS",  schArr: iso8601("2026-03-02T10:52:00-05:00"), schDep: iso8601("2026-03-02T10:52:00-05:00"), arr: iso8601("2026-03-02T10:52:00-05:00"), dep: iso8601("2026-03-02T10:55:00-05:00"), status: .Departed),
-            "UCA":  Stop(code: "UCA",  schArr: iso8601("2026-03-02T11:50:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T11:50:00-05:00"), dep: iso8601("2026-03-02T11:50:00-05:00"), status: .enroute),
-            "ROM":  Stop(code: "ROM",  schArr: iso8601("2026-03-02T12:03:00-05:00"), schDep: iso8601("2026-03-02T12:03:00-05:00"), arr: iso8601("2026-03-02T12:04:00-05:00"), dep: iso8601("2026-03-02T12:04:00-05:00"), status: .enroute),
-            "SYR":  Stop(code: "SYR",  schArr: iso8601("2026-03-02T12:57:00-05:00"), schDep: iso8601("2026-03-02T12:57:00-05:00"), arr: iso8601("2026-03-02T12:57:00-05:00"), dep: iso8601("2026-03-02T12:57:00-05:00"), status: .enroute),
-            "ROC":  Stop(code: "ROC",  schArr: iso8601("2026-03-02T14:13:00-05:00"), schDep: iso8601("2026-03-02T14:13:00-05:00"), arr: iso8601("2026-03-02T14:13:00-05:00"), dep: iso8601("2026-03-02T14:13:00-05:00"), status: .enroute),
-            "BUF":  Stop(code: "BUF",  schArr: iso8601("2026-03-02T15:19:00-05:00"), schDep: iso8601("2026-03-02T15:19:00-05:00"), arr: iso8601("2026-03-02T15:19:00-05:00"), dep: iso8601("2026-03-02T15:19:00-05:00"), status: .enroute),
-            "BFX":  Stop(code: "BFX",  schArr: iso8601("2026-03-02T15:32:00-05:00"), schDep: iso8601("2026-03-02T15:32:00-05:00"), arr: iso8601("2026-03-02T15:32:00-05:00"), dep: iso8601("2026-03-02T15:32:00-05:00"), status: .enroute),
-            "NFL":  Stop(code: "NFL",  schArr: iso8601("2026-03-02T16:42:00-05:00"), schDep: iso8601("2026-03-02T16:50:00-05:00"), arr: iso8601("2026-03-02T16:42:00-05:00"), dep: iso8601("2026-03-02T16:42:00-05:00"), status: .enroute),
-            "NIAG": Stop(code: "NIAG", schArr: iso8601("2026-03-02T16:55:00-05:00"), schDep: iso8601("2026-03-02T17:45:00-05:00"), arr: iso8601("2026-03-02T16:55:00-05:00"), dep: iso8601("2026-03-02T16:55:00-05:00"), status: .enroute),
-            "TRTO": Stop(code: "TRTO", schArr: iso8601("2026-03-02T19:43:00-05:00"), schDep: iso8601("2026-03-02T19:43:00-05:00"), arr: iso8601("2026-03-02T19:40:00-05:00"), dep: iso8601("2026-03-02T19:40:00-05:00"), status: .enroute),
-        ],
         heading: .N,
         eventCode: "UCA",
         eventTZ: "America/New_York",
@@ -167,7 +125,7 @@ extension TTTrain {
     )
 
     // Maple Leaf: Toronto Union → New York Penn
-    static let train64Fixture = TTTrain(
+    static let train64Fixture = Train(
         routeName: "Maple Leaf",
         trainNum: "64",
         trainNumRaw: "64",
@@ -175,30 +133,6 @@ extension TTTrain {
         lat: 43.10966579176782,
         lon: -79.0553316017658,
         iconColor: "#2a893d",
-        stops: [
-            "TRTO": Stop(code: "TRTO", schArr: iso8601("2026-03-02T08:20:00-05:00"), schDep: iso8601("2026-03-02T08:20:00-05:00"), arr: iso8601("2026-03-02T08:20:00-05:00"), dep: iso8601("2026-03-02T08:20:00-05:00"), status: .Departed),
-            "OAKV": Stop(code: "OAKV", schArr: iso8601("2026-03-02T13:43:00Z"),      schDep: iso8601("2026-03-02T13:45:00Z"),      arr: iso8601("2026-03-02T13:43:00Z"),      dep: iso8601("2026-03-02T13:45:00Z"),      status: .Departed),
-            "ALDR": Stop(code: "ALDR", schArr: iso8601("2026-03-02T13:56:00Z"),      schDep: iso8601("2026-03-02T14:01:00Z"),      arr: iso8601("2026-03-02T13:56:00Z"),      dep: iso8601("2026-03-02T14:01:00Z"),      status: .Departed),
-            "GRIM": Stop(code: "GRIM", schArr: iso8601("2026-03-02T14:37:00Z"),      schDep: iso8601("2026-03-02T14:38:00Z"),      arr: iso8601("2026-03-02T14:37:00Z"),      dep: iso8601("2026-03-02T14:38:00Z"),      status: .Departed),
-            "SCAT": Stop(code: "SCAT", schArr: iso8601("2026-03-02T14:57:00Z"),      schDep: iso8601("2026-03-02T14:58:00Z"),      arr: iso8601("2026-03-02T14:57:00Z"),      dep: iso8601("2026-03-02T14:58:00Z"),      status: .Departed),
-            "NIAG": Stop(code: "NIAG", schArr: iso8601("2026-03-02T10:20:00-05:00"), schDep: iso8601("2026-03-02T10:28:00-05:00"), arr: iso8601("2026-03-02T10:17:00-05:00"), dep: iso8601("2026-03-02T10:28:00-05:00"), status: .Departed),
-            "NFL":  Stop(code: "NFL",  schArr: iso8601("2026-03-02T10:44:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T10:30:00-05:00"), dep: iso8601("2026-03-02T11:50:00-05:00"), status: .station),
-            "BFX":  Stop(code: "BFX",  schArr: iso8601("2026-03-02T12:23:00-05:00"), schDep: iso8601("2026-03-02T12:25:00-05:00"), arr: iso8601("2026-03-02T12:25:00-05:00"), dep: iso8601("2026-03-02T12:25:00-05:00"), status: .enroute),
-            "BUF":  Stop(code: "BUF",  schArr: iso8601("2026-03-02T12:36:00-05:00"), schDep: iso8601("2026-03-02T12:40:00-05:00"), arr: iso8601("2026-03-02T12:36:00-05:00"), dep: iso8601("2026-03-02T12:36:00-05:00"), status: .enroute),
-            "ROC":  Stop(code: "ROC",  schArr: iso8601("2026-03-02T13:30:00-05:00"), schDep: iso8601("2026-03-02T13:34:00-05:00"), arr: iso8601("2026-03-02T13:30:00-05:00"), dep: iso8601("2026-03-02T13:30:00-05:00"), status: .enroute),
-            "SYR":  Stop(code: "SYR",  schArr: iso8601("2026-03-02T14:44:00-05:00"), schDep: iso8601("2026-03-02T14:54:00-05:00"), arr: iso8601("2026-03-02T14:47:00-05:00"), dep: iso8601("2026-03-02T14:47:00-05:00"), status: .enroute),
-            "ROM":  Stop(code: "ROM",  schArr: iso8601("2026-03-02T15:35:00-05:00"), schDep: iso8601("2026-03-02T15:36:00-05:00"), arr: iso8601("2026-03-02T15:35:00-05:00"), dep: iso8601("2026-03-02T15:35:00-05:00"), status: .enroute),
-            "UCA":  Stop(code: "UCA",  schArr: iso8601("2026-03-02T15:51:00-05:00"), schDep: iso8601("2026-03-02T15:53:00-05:00"), arr: iso8601("2026-03-02T15:51:00-05:00"), dep: iso8601("2026-03-02T15:51:00-05:00"), status: .enroute),
-            "AMS":  Stop(code: "AMS",  schArr: iso8601("2026-03-02T16:53:00-05:00"), schDep: iso8601("2026-03-02T16:55:00-05:00"), arr: iso8601("2026-03-02T16:53:00-05:00"), dep: iso8601("2026-03-02T16:53:00-05:00"), status: .enroute),
-            "SDY":  Stop(code: "SDY",  schArr: iso8601("2026-03-02T17:39:00-05:00"), schDep: iso8601("2026-03-02T17:39:00-05:00"), arr: iso8601("2026-03-02T17:39:00-05:00"), dep: iso8601("2026-03-02T17:39:00-05:00"), status: .enroute),
-            "ALB":  Stop(code: "ALB",  schArr: iso8601("2026-03-02T18:05:00-05:00"), schDep: iso8601("2026-03-02T19:40:00-05:00"), arr: iso8601("2026-03-02T18:05:00-05:00"), dep: iso8601("2026-03-02T18:05:00-05:00"), status: .enroute),
-            "HUD":  Stop(code: "HUD",  schArr: iso8601("2026-03-02T20:01:00-05:00"), schDep: iso8601("2026-03-02T20:03:00-05:00"), arr: iso8601("2026-03-02T20:01:00-05:00"), dep: iso8601("2026-03-02T20:01:00-05:00"), status: .enroute),
-            "RHI":  Stop(code: "RHI",  schArr: iso8601("2026-03-02T20:23:00-05:00"), schDep: iso8601("2026-03-02T20:25:00-05:00"), arr: iso8601("2026-03-02T20:23:00-05:00"), dep: iso8601("2026-03-02T20:23:00-05:00"), status: .enroute),
-            "POU":  Stop(code: "POU",  schArr: iso8601("2026-03-02T20:39:00-05:00"), schDep: iso8601("2026-03-02T20:40:00-05:00"), arr: iso8601("2026-03-02T20:39:00-05:00"), dep: iso8601("2026-03-02T20:39:00-05:00"), status: .enroute),
-            "CRT":  Stop(code: "CRT",  schArr: iso8601("2026-03-02T21:19:00-05:00"), schDep: iso8601("2026-03-02T21:21:00-05:00"), arr: iso8601("2026-03-02T21:19:00-05:00"), dep: iso8601("2026-03-02T21:19:00-05:00"), status: .enroute),
-            "YNY":  Stop(code: "YNY",  schArr: iso8601("2026-03-02T21:41:00-05:00"), schDep: iso8601("2026-03-02T21:42:00-05:00"), arr: iso8601("2026-03-02T21:41:00-05:00"), dep: iso8601("2026-03-02T21:41:00-05:00"), status: .enroute),
-            "NYP":  Stop(code: "NYP",  schArr: iso8601("2026-03-02T22:15:00-05:00"), schDep: iso8601("2026-03-02T22:15:00-05:00"), arr: iso8601("2026-03-02T22:03:00-05:00"), dep: iso8601("2026-03-02T22:03:00-05:00"), status: .enroute),
-        ],
         heading: .E,
         eventCode: "NFL",
         eventTZ: "America/New_York",
@@ -222,7 +156,7 @@ extension TTTrain {
     )
 
     // Empire Service: Niagara Falls → New York Penn
-    static let train280Fixture = TTTrain(
+    static let train280Fixture = Train(
         routeName: "Empire Service",
         trainNum: "280",
         trainNumRaw: "280",
@@ -230,23 +164,6 @@ extension TTTrain {
         lat: 41.67042623010097,
         lon: -73.94168239536387,
         iconColor: "#2a9128",
-        stops: [
-            "NFL": Stop(code: "NFL", schArr: iso8601("2026-03-02T03:52:00-05:00"), schDep: iso8601("2026-03-02T03:52:00-05:00"), arr: iso8601("2026-03-02T03:52:00-05:00"), dep: iso8601("2026-03-02T03:52:00-05:00"), status: .Departed),
-            "BFX": Stop(code: "BFX", schArr: iso8601("2026-03-02T04:28:00-05:00"), schDep: iso8601("2026-03-02T04:28:00-05:00"), arr: iso8601("2026-03-02T04:28:00-05:00"), dep: iso8601("2026-03-02T04:29:00-05:00"), status: .Departed),
-            "BUF": Stop(code: "BUF", schArr: iso8601("2026-03-02T04:45:00-05:00"), schDep: iso8601("2026-03-02T04:45:00-05:00"), arr: iso8601("2026-03-02T04:40:00-05:00"), dep: iso8601("2026-03-02T04:45:00-05:00"), status: .Departed),
-            "ROC": Stop(code: "ROC", schArr: iso8601("2026-03-02T05:40:00-05:00"), schDep: iso8601("2026-03-02T05:40:00-05:00"), arr: iso8601("2026-03-02T05:36:00-05:00"), dep: iso8601("2026-03-02T05:40:00-05:00"), status: .Departed),
-            "SYR": Stop(code: "SYR", schArr: iso8601("2026-03-02T06:57:00-05:00"), schDep: iso8601("2026-03-02T07:06:00-05:00"), arr: iso8601("2026-03-02T06:50:00-05:00"), dep: iso8601("2026-03-02T07:20:00-05:00"), status: .Departed),
-            "ROM": Stop(code: "ROM", schArr: iso8601("2026-03-02T07:45:00-05:00"), schDep: iso8601("2026-03-02T07:45:00-05:00"), arr: iso8601("2026-03-02T08:08:00-05:00"), dep: iso8601("2026-03-02T08:10:00-05:00"), status: .Departed),
-            "UCA": Stop(code: "UCA", schArr: iso8601("2026-03-02T07:59:00-05:00"), schDep: iso8601("2026-03-02T07:59:00-05:00"), arr: iso8601("2026-03-02T08:22:00-05:00"), dep: iso8601("2026-03-02T08:24:00-05:00"), status: .Departed),
-            "AMS": Stop(code: "AMS", schArr: iso8601("2026-03-02T09:01:00-05:00"), schDep: iso8601("2026-03-02T09:01:00-05:00"), arr: iso8601("2026-03-02T09:22:00-05:00"), dep: iso8601("2026-03-02T09:23:00-05:00"), status: .Departed),
-            "SDY": Stop(code: "SDY", schArr: iso8601("2026-03-02T09:21:00-05:00"), schDep: iso8601("2026-03-02T09:21:00-05:00"), arr: iso8601("2026-03-02T09:40:00-05:00"), dep: iso8601("2026-03-02T09:43:00-05:00"), status: .Departed),
-            "ALB": Stop(code: "ALB", schArr: iso8601("2026-03-02T09:42:00-05:00"), schDep: iso8601("2026-03-02T10:05:00-05:00"), arr: iso8601("2026-03-02T10:04:00-05:00"), dep: iso8601("2026-03-02T10:17:00-05:00"), status: .Departed),
-            "HUD": Stop(code: "HUD", schArr: iso8601("2026-03-02T10:26:00-05:00"), schDep: iso8601("2026-03-02T10:28:00-05:00"), arr: iso8601("2026-03-02T10:38:00-05:00"), dep: iso8601("2026-03-02T10:42:00-05:00"), status: .Departed),
-            "RHI": Stop(code: "RHI", schArr: iso8601("2026-03-02T10:49:00-05:00"), schDep: iso8601("2026-03-02T10:51:00-05:00"), arr: iso8601("2026-03-02T11:01:00-05:00"), dep: iso8601("2026-03-02T11:03:00-05:00"), status: .Departed),
-            "POU": Stop(code: "POU", schArr: iso8601("2026-03-02T11:10:00-05:00"), schDep: iso8601("2026-03-02T11:10:00-05:00"), arr: iso8601("2026-03-02T11:15:00-05:00"), dep: iso8601("2026-03-02T11:17:00-05:00"), status: .Departed),
-            "CRT": Stop(code: "CRT", schArr: iso8601("2026-03-02T11:50:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T11:54:00-05:00"), dep: iso8601("2026-03-02T11:54:00-05:00"), status: .enroute),
-            "NYP": Stop(code: "NYP", schArr: iso8601("2026-03-02T12:45:00-05:00"), schDep: iso8601("2026-03-02T12:45:00-05:00"), arr: iso8601("2026-03-02T12:33:00-05:00"), dep: iso8601("2026-03-02T12:33:00-05:00"), status: .enroute),
-        ],
         heading: .S,
         eventCode: "CRT",
         eventTZ: "America/New_York",
@@ -270,7 +187,7 @@ extension TTTrain {
     )
 
     // Empire Service: New York Penn → Niagara Falls
-    static let train281Fixture = TTTrain(
+    static let train281Fixture = Train(
         routeName: "Empire Service",
         trainNum: "281",
         trainNumRaw: "281",
@@ -278,23 +195,6 @@ extension TTTrain {
         lat: 41.3350074627406,
         lon: -73.96759943551915,
         iconColor: "#2a893d",
-        stops: [
-            "NYP": Stop(code: "NYP", schArr: iso8601("2026-03-02T10:20:00-05:00"), schDep: iso8601("2026-03-02T10:20:00-05:00"), arr: iso8601("2026-03-02T10:20:00-05:00"), dep: iso8601("2026-03-02T10:20:00-05:00"), status: .Departed),
-            "CRT": Stop(code: "CRT", schArr: iso8601("2026-03-02T11:01:00-05:00"), schDep: iso8601("2026-03-02T11:01:00-05:00"), arr: iso8601("2026-03-02T11:03:00-05:00"), dep: iso8601("2026-03-02T11:05:00-05:00"), status: .Departed),
-            "POU": Stop(code: "POU", schArr: iso8601("2026-03-02T11:43:00-05:00"), schDep: iso8601("2026-03-02T11:43:00-05:00"), arr: iso8601("2026-03-02T11:43:00-05:00"), dep: iso8601("2026-03-02T11:43:00-05:00"), status: .enroute),
-            "RHI": Stop(code: "RHI", schArr: iso8601("2026-03-02T12:00:00-05:00"), schDep: iso8601("2026-03-02T12:00:00-05:00"), arr: iso8601("2026-03-02T12:00:00-05:00"), dep: iso8601("2026-03-02T12:00:00-05:00"), status: .enroute),
-            "HUD": Stop(code: "HUD", schArr: iso8601("2026-03-02T12:25:00-05:00"), schDep: iso8601("2026-03-02T12:25:00-05:00"), arr: iso8601("2026-03-02T12:25:00-05:00"), dep: iso8601("2026-03-02T12:25:00-05:00"), status: .enroute),
-            "ALB": Stop(code: "ALB", schArr: iso8601("2026-03-02T12:50:00-05:00"), schDep: iso8601("2026-03-02T13:15:00-05:00"), arr: iso8601("2026-03-02T12:50:00-05:00"), dep: iso8601("2026-03-02T12:50:00-05:00"), status: .enroute),
-            "SDY": Stop(code: "SDY", schArr: iso8601("2026-03-02T13:39:00-05:00"), schDep: iso8601("2026-03-02T13:39:00-05:00"), arr: iso8601("2026-03-02T13:39:00-05:00"), dep: iso8601("2026-03-02T13:39:00-05:00"), status: .enroute),
-            "AMS": Stop(code: "AMS", schArr: iso8601("2026-03-02T13:57:00-05:00"), schDep: iso8601("2026-03-02T13:57:00-05:00"), arr: iso8601("2026-03-02T13:57:00-05:00"), dep: iso8601("2026-03-02T13:57:00-05:00"), status: .enroute),
-            "UCA": Stop(code: "UCA", schArr: iso8601("2026-03-02T14:55:00-05:00"), schDep: iso8601("2026-03-02T14:55:00-05:00"), arr: iso8601("2026-03-02T14:55:00-05:00"), dep: iso8601("2026-03-02T14:55:00-05:00"), status: .enroute),
-            "ROM": Stop(code: "ROM", schArr: iso8601("2026-03-02T15:11:00-05:00"), schDep: iso8601("2026-03-02T15:11:00-05:00"), arr: iso8601("2026-03-02T15:11:00-05:00"), dep: iso8601("2026-03-02T15:11:00-05:00"), status: .enroute),
-            "SYR": Stop(code: "SYR", schArr: iso8601("2026-03-02T16:02:00-05:00"), schDep: iso8601("2026-03-02T16:02:00-05:00"), arr: iso8601("2026-03-02T16:02:00-05:00"), dep: iso8601("2026-03-02T16:02:00-05:00"), status: .enroute),
-            "ROC": Stop(code: "ROC", schArr: iso8601("2026-03-02T17:28:00-05:00"), schDep: iso8601("2026-03-02T17:28:00-05:00"), arr: iso8601("2026-03-02T17:28:00-05:00"), dep: iso8601("2026-03-02T17:28:00-05:00"), status: .enroute),
-            "BUF": Stop(code: "BUF", schArr: iso8601("2026-03-02T18:34:00-05:00"), schDep: iso8601("2026-03-02T18:34:00-05:00"), arr: iso8601("2026-03-02T18:34:00-05:00"), dep: iso8601("2026-03-02T18:34:00-05:00"), status: .enroute),
-            "BFX": Stop(code: "BFX", schArr: iso8601("2026-03-02T18:55:00-05:00"), schDep: iso8601("2026-03-02T18:55:00-05:00"), arr: iso8601("2026-03-02T18:55:00-05:00"), dep: iso8601("2026-03-02T18:55:00-05:00"), status: .enroute),
-            "NFL": Stop(code: "NFL", schArr: iso8601("2026-03-02T19:35:00-05:00"), schDep: iso8601("2026-03-02T19:35:00-05:00"), arr: iso8601("2026-03-02T19:31:00-05:00"), dep: iso8601("2026-03-02T19:31:00-05:00"), status: .enroute),
-        ],
         heading: .NE,
         eventCode: "POU",
         eventTZ: "America/New_York",
@@ -318,7 +218,7 @@ extension TTTrain {
     )
 
     // Empire Service: Niagara Falls → New York Penn
-    static let train284Fixture = TTTrain(
+    static let train284Fixture = Train(
         routeName: "Empire Service",
         trainNum: "284",
         trainNumRaw: "284",
@@ -326,24 +226,6 @@ extension TTTrain {
         lat: 43.02233226928992,
         lon: -74.91639898947318,
         iconColor: "#479c25",
-        stops: [
-            "NFL": Stop(code: "NFL", schArr: iso8601("2026-03-02T06:47:00-05:00"), schDep: iso8601("2026-03-02T06:47:00-05:00"), arr: iso8601("2026-03-02T06:47:00-05:00"), dep: iso8601("2026-03-02T06:47:00-05:00"), status: .Departed),
-            "BFX": Stop(code: "BFX", schArr: iso8601("2026-03-02T07:22:00-05:00"), schDep: iso8601("2026-03-02T07:22:00-05:00"), arr: iso8601("2026-03-02T07:21:00-05:00"), dep: iso8601("2026-03-02T07:23:00-05:00"), status: .Departed),
-            "BUF": Stop(code: "BUF", schArr: iso8601("2026-03-02T07:39:00-05:00"), schDep: iso8601("2026-03-02T07:39:00-05:00"), arr: iso8601("2026-03-02T07:34:00-05:00"), dep: iso8601("2026-03-02T07:39:00-05:00"), status: .Departed),
-            "ROC": Stop(code: "ROC", schArr: iso8601("2026-03-02T08:34:00-05:00"), schDep: iso8601("2026-03-02T08:34:00-05:00"), arr: iso8601("2026-03-02T08:30:00-05:00"), dep: iso8601("2026-03-02T08:34:00-05:00"), status: .Departed),
-            "SYR": Stop(code: "SYR", schArr: iso8601("2026-03-02T09:49:00-05:00"), schDep: iso8601("2026-03-02T09:59:00-05:00"), arr: iso8601("2026-03-02T09:49:00-05:00"), dep: iso8601("2026-03-02T10:06:00-05:00"), status: .Departed),
-            "ROM": Stop(code: "ROM", schArr: iso8601("2026-03-02T10:37:00-05:00"), schDep: iso8601("2026-03-02T10:38:00-05:00"), arr: iso8601("2026-03-02T10:44:00-05:00"), dep: iso8601("2026-03-02T10:47:00-05:00"), status: .Departed),
-            "UCA": Stop(code: "UCA", schArr: iso8601("2026-03-02T10:52:00-05:00"), schDep: iso8601("2026-03-02T10:52:00-05:00"), arr: iso8601("2026-03-02T11:00:00-05:00"), dep: iso8601("2026-03-02T11:02:00-05:00"), status: .Departed),
-            "AMS": Stop(code: "AMS", schArr: iso8601("2026-03-02T11:54:00-05:00"), schDep: iso8601("2026-03-02T11:54:00-05:00"), arr: iso8601("2026-03-02T12:03:00-05:00"), dep: iso8601("2026-03-02T12:03:00-05:00"), status: .enroute),
-            "SDY": Stop(code: "SDY", schArr: iso8601("2026-03-02T12:17:00-05:00"), schDep: iso8601("2026-03-02T12:17:00-05:00"), arr: iso8601("2026-03-02T12:20:00-05:00"), dep: iso8601("2026-03-02T12:20:00-05:00"), status: .enroute),
-            "ALB": Stop(code: "ALB", schArr: iso8601("2026-03-02T12:39:00-05:00"), schDep: iso8601("2026-03-02T13:05:00-05:00"), arr: iso8601("2026-03-02T12:41:00-05:00"), dep: iso8601("2026-03-02T12:41:00-05:00"), status: .enroute),
-            "HUD": Stop(code: "HUD", schArr: iso8601("2026-03-02T13:26:00-05:00"), schDep: iso8601("2026-03-02T13:28:00-05:00"), arr: iso8601("2026-03-02T13:26:00-05:00"), dep: iso8601("2026-03-02T13:26:00-05:00"), status: .enroute),
-            "RHI": Stop(code: "RHI", schArr: iso8601("2026-03-02T13:49:00-05:00"), schDep: iso8601("2026-03-02T13:51:00-05:00"), arr: iso8601("2026-03-02T13:49:00-05:00"), dep: iso8601("2026-03-02T13:49:00-05:00"), status: .enroute),
-            "POU": Stop(code: "POU", schArr: iso8601("2026-03-02T14:10:00-05:00"), schDep: iso8601("2026-03-02T14:10:00-05:00"), arr: iso8601("2026-03-02T14:10:00-05:00"), dep: iso8601("2026-03-02T14:10:00-05:00"), status: .enroute),
-            "CRT": Stop(code: "CRT", schArr: iso8601("2026-03-02T14:50:00-05:00"), schDep: iso8601("2026-03-02T14:50:00-05:00"), arr: iso8601("2026-03-02T14:50:00-05:00"), dep: iso8601("2026-03-02T14:50:00-05:00"), status: .enroute),
-            "YNY": Stop(code: "YNY", schArr: iso8601("2026-03-02T15:11:00-05:00"), schDep: iso8601("2026-03-02T15:11:00-05:00"), arr: iso8601("2026-03-02T15:11:00-05:00"), dep: iso8601("2026-03-02T15:11:00-05:00"), status: .enroute),
-            "NYP": Stop(code: "NYP", schArr: iso8601("2026-03-02T15:45:00-05:00"), schDep: iso8601("2026-03-02T15:45:00-05:00"), arr: iso8601("2026-03-02T15:34:00-05:00"), dep: iso8601("2026-03-02T15:34:00-05:00"), status: .enroute),
-        ],
         heading: .E,
         eventCode: "AMS",
         eventTZ: "America/New_York",
@@ -365,4 +247,138 @@ extension TTTrain {
         providerShort: "AMTK",
         onlyOfTrainNum: true
     )
+}
+
+// MARK: - Stop
+
+extension Array where Element == Stop {
+    // Lake Shore Limited: Chicago → New York Penn
+    static let train48StopsFixture = [
+        Stop(code: "CHI", schArr: iso8601("2026-03-01T21:30:00-06:00"), schDep: iso8601("2026-03-01T21:30:00-06:00"), arr: iso8601("2026-03-01T21:30:00-06:00"), dep: iso8601("2026-03-01T21:30:00-06:00"), status: .Departed),
+        Stop(code: "SOB", schArr: iso8601("2026-03-01T23:59:00-05:00"), schDep: iso8601("2026-03-01T23:59:00-05:00"), arr: iso8601("2026-03-02T00:39:00-05:00"), dep: iso8601("2026-03-02T00:41:00-05:00"), status: .Departed),
+        Stop(code: "EKH", schArr: iso8601("2026-03-02T00:24:00-05:00"), schDep: iso8601("2026-03-02T00:27:00-05:00"), arr: iso8601("2026-03-02T01:01:00-05:00"), dep: iso8601("2026-03-02T01:03:00-05:00"), status: .Departed),
+        Stop(code: "WTI", schArr: iso8601("2026-03-02T01:15:00-05:00"), schDep: iso8601("2026-03-02T01:20:00-05:00"), arr: iso8601("2026-03-02T01:52:00-05:00"), dep: iso8601("2026-03-02T01:57:00-05:00"), status: .Departed),
+        Stop(code: "BYN", schArr: iso8601("2026-03-02T01:43:00-05:00"), schDep: iso8601("2026-03-02T01:45:00-05:00"), arr: iso8601("2026-03-02T02:22:00-05:00"), dep: iso8601("2026-03-02T02:24:00-05:00"), status: .Departed),
+        Stop(code: "TOL", schArr: iso8601("2026-03-02T03:11:00-05:00"), schDep: iso8601("2026-03-02T03:31:00-05:00"), arr: iso8601("2026-03-02T03:24:00-05:00"), dep: iso8601("2026-03-02T03:34:00-05:00"), status: .Departed),
+        Stop(code: "SKY", schArr: iso8601("2026-03-02T04:19:00-05:00"), schDep: iso8601("2026-03-02T04:23:00-05:00"), arr: iso8601("2026-03-02T04:21:00-05:00"), dep: iso8601("2026-03-02T04:25:00-05:00"), status: .Departed),
+        Stop(code: "ELY", schArr: iso8601("2026-03-02T04:58:00-05:00"), schDep: iso8601("2026-03-02T05:02:00-05:00"), arr: iso8601("2026-03-02T04:59:00-05:00"), dep: iso8601("2026-03-02T05:02:00-05:00"), status: .Departed),
+        Stop(code: "CLE", schArr: iso8601("2026-03-02T05:38:00-05:00"), schDep: iso8601("2026-03-02T05:50:00-05:00"), arr: iso8601("2026-03-02T05:50:00-05:00"), dep: iso8601("2026-03-02T06:01:00-05:00"), status: .Departed),
+        Stop(code: "ERI", schArr: iso8601("2026-03-02T07:18:00-05:00"), schDep: iso8601("2026-03-02T07:24:00-05:00"), arr: iso8601("2026-03-02T07:27:00-05:00"), dep: iso8601("2026-03-02T07:34:00-05:00"), status: .Departed),
+        Stop(code: "BUF", schArr: iso8601("2026-03-02T08:53:00-05:00"), schDep: iso8601("2026-03-02T09:05:00-05:00"), arr: iso8601("2026-03-02T09:18:00-05:00"), dep: iso8601("2026-03-02T09:36:00-05:00"), status: .Departed),
+        Stop(code: "ROC", schArr: iso8601("2026-03-02T10:00:00-05:00"), schDep: iso8601("2026-03-02T10:06:00-05:00"), arr: iso8601("2026-03-02T10:25:00-05:00"), dep: iso8601("2026-03-02T10:31:00-05:00"), status: .Departed),
+        Stop(code: "SYR", schArr: iso8601("2026-03-02T11:28:00-05:00"), schDep: iso8601("2026-03-02T11:42:00-05:00"), arr: iso8601("2026-03-02T11:41:00-05:00"), dep: iso8601("2026-03-02T11:41:00-05:00"), status: .enroute),
+        Stop(code: "UCA", schArr: iso8601("2026-03-02T12:37:00-05:00"), schDep: iso8601("2026-03-02T12:42:00-05:00"), arr: iso8601("2026-03-02T12:37:00-05:00"), dep: iso8601("2026-03-02T12:37:00-05:00"), status: .enroute),
+        Stop(code: "SDY", schArr: iso8601("2026-03-02T14:15:00-05:00"), schDep: iso8601("2026-03-02T14:21:00-05:00"), arr: iso8601("2026-03-02T14:15:00-05:00"), dep: iso8601("2026-03-02T14:15:00-05:00"), status: .enroute),
+        Stop(code: "ALB", schArr: iso8601("2026-03-02T14:53:00-05:00"), schDep: iso8601("2026-03-02T16:10:00-05:00"), arr: iso8601("2026-03-02T14:53:00-05:00"), dep: iso8601("2026-03-02T14:53:00-05:00"), status: .enroute),
+        Stop(code: "RHI", schArr: iso8601("2026-03-02T16:55:00-05:00"), schDep: iso8601("2026-03-02T16:55:00-05:00"), arr: iso8601("2026-03-02T16:57:00-05:00"), dep: iso8601("2026-03-02T16:57:00-05:00"), status: .enroute),
+        Stop(code: "POU", schArr: iso8601("2026-03-02T17:13:00-05:00"), schDep: iso8601("2026-03-02T17:13:00-05:00"), arr: iso8601("2026-03-02T17:09:00-05:00"), dep: iso8601("2026-03-02T17:09:00-05:00"), status: .enroute),
+        Stop(code: "CRT", schArr: iso8601("2026-03-02T17:53:00-05:00"), schDep: iso8601("2026-03-02T17:53:00-05:00"), arr: iso8601("2026-03-02T17:51:00-05:00"), dep: iso8601("2026-03-02T17:51:00-05:00"), status: .enroute),
+        Stop(code: "NYP", schArr: iso8601("2026-03-02T18:42:00-05:00"), schDep: iso8601("2026-03-02T18:42:00-05:00"), arr: iso8601("2026-03-02T18:33:00-05:00"), dep: iso8601("2026-03-02T18:33:00-05:00"), status: .enroute),
+    ]
+
+    // Maple Leaf: New York Penn → Toronto Union
+    static let train63StopsFixture = [
+        Stop(code: "NYP",  schArr: iso8601("2026-03-02T07:15:00-05:00"), schDep: iso8601("2026-03-02T07:15:00-05:00"), arr: iso8601("2026-03-02T07:15:00-05:00"), dep: iso8601("2026-03-02T07:15:00-05:00"), status: .Departed),
+        Stop(code: "YNY",  schArr: iso8601("2026-03-02T07:43:00-05:00"), schDep: iso8601("2026-03-02T07:44:00-05:00"), arr: iso8601("2026-03-02T07:37:00-05:00"), dep: iso8601("2026-03-02T07:44:00-05:00"), status: .Departed),
+        Stop(code: "CRT",  schArr: iso8601("2026-03-02T08:02:00-05:00"), schDep: iso8601("2026-03-02T08:03:00-05:00"), arr: iso8601("2026-03-02T08:03:00-05:00"), dep: iso8601("2026-03-02T08:05:00-05:00"), status: .Departed),
+        Stop(code: "POU",  schArr: iso8601("2026-03-02T08:43:00-05:00"), schDep: iso8601("2026-03-02T08:45:00-05:00"), arr: iso8601("2026-03-02T08:41:00-05:00"), dep: iso8601("2026-03-02T08:45:00-05:00"), status: .Departed),
+        Stop(code: "RHI",  schArr: iso8601("2026-03-02T08:58:00-05:00"), schDep: iso8601("2026-03-02T09:00:00-05:00"), arr: iso8601("2026-03-02T09:00:00-05:00"), dep: iso8601("2026-03-02T09:02:00-05:00"), status: .Departed),
+        Stop(code: "HUD",  schArr: iso8601("2026-03-02T09:20:00-05:00"), schDep: iso8601("2026-03-02T09:21:00-05:00"), arr: iso8601("2026-03-02T09:25:00-05:00"), dep: iso8601("2026-03-02T09:26:00-05:00"), status: .Departed),
+        Stop(code: "ALB",  schArr: iso8601("2026-03-02T09:50:00-05:00"), schDep: iso8601("2026-03-02T10:10:00-05:00"), arr: iso8601("2026-03-02T09:53:00-05:00"), dep: iso8601("2026-03-02T10:10:00-05:00"), status: .Departed),
+        Stop(code: "SDY",  schArr: iso8601("2026-03-02T10:34:00-05:00"), schDep: iso8601("2026-03-02T10:34:00-05:00"), arr: iso8601("2026-03-02T10:32:00-05:00"), dep: iso8601("2026-03-02T10:34:00-05:00"), status: .Departed),
+        Stop(code: "AMS",  schArr: iso8601("2026-03-02T10:52:00-05:00"), schDep: iso8601("2026-03-02T10:52:00-05:00"), arr: iso8601("2026-03-02T10:52:00-05:00"), dep: iso8601("2026-03-02T10:55:00-05:00"), status: .Departed),
+        Stop(code: "UCA",  schArr: iso8601("2026-03-02T11:50:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T11:50:00-05:00"), dep: iso8601("2026-03-02T11:50:00-05:00"), status: .enroute),
+        Stop(code: "ROM",  schArr: iso8601("2026-03-02T12:03:00-05:00"), schDep: iso8601("2026-03-02T12:03:00-05:00"), arr: iso8601("2026-03-02T12:04:00-05:00"), dep: iso8601("2026-03-02T12:04:00-05:00"), status: .enroute),
+        Stop(code: "SYR",  schArr: iso8601("2026-03-02T12:57:00-05:00"), schDep: iso8601("2026-03-02T12:57:00-05:00"), arr: iso8601("2026-03-02T12:57:00-05:00"), dep: iso8601("2026-03-02T12:57:00-05:00"), status: .enroute),
+        Stop(code: "ROC",  schArr: iso8601("2026-03-02T14:13:00-05:00"), schDep: iso8601("2026-03-02T14:13:00-05:00"), arr: iso8601("2026-03-02T14:13:00-05:00"), dep: iso8601("2026-03-02T14:13:00-05:00"), status: .enroute),
+        Stop(code: "BUF",  schArr: iso8601("2026-03-02T15:19:00-05:00"), schDep: iso8601("2026-03-02T15:19:00-05:00"), arr: iso8601("2026-03-02T15:19:00-05:00"), dep: iso8601("2026-03-02T15:19:00-05:00"), status: .enroute),
+        Stop(code: "BFX",  schArr: iso8601("2026-03-02T15:32:00-05:00"), schDep: iso8601("2026-03-02T15:32:00-05:00"), arr: iso8601("2026-03-02T15:32:00-05:00"), dep: iso8601("2026-03-02T15:32:00-05:00"), status: .enroute),
+        Stop(code: "NFL",  schArr: iso8601("2026-03-02T16:42:00-05:00"), schDep: iso8601("2026-03-02T16:50:00-05:00"), arr: iso8601("2026-03-02T16:42:00-05:00"), dep: iso8601("2026-03-02T16:42:00-05:00"), status: .enroute),
+        Stop(code: "NIAG", schArr: iso8601("2026-03-02T16:55:00-05:00"), schDep: iso8601("2026-03-02T17:45:00-05:00"), arr: iso8601("2026-03-02T16:55:00-05:00"), dep: iso8601("2026-03-02T16:55:00-05:00"), status: .enroute),
+        Stop(code: "TRTO", schArr: iso8601("2026-03-02T19:43:00-05:00"), schDep: iso8601("2026-03-02T19:43:00-05:00"), arr: iso8601("2026-03-02T19:40:00-05:00"), dep: iso8601("2026-03-02T19:40:00-05:00"), status: .enroute),
+    ]
+
+    // Maple Leaf: Toronto Union → New York Penn
+    static let train64StopsFixture = [
+        Stop(code: "TRTO", schArr: iso8601("2026-03-02T08:20:00-05:00"), schDep: iso8601("2026-03-02T08:20:00-05:00"), arr: iso8601("2026-03-02T08:20:00-05:00"), dep: iso8601("2026-03-02T08:20:00-05:00"), status: .Departed),
+        Stop(code: "OAKV", schArr: iso8601("2026-03-02T13:43:00Z"),      schDep: iso8601("2026-03-02T13:45:00Z"),      arr: iso8601("2026-03-02T13:43:00Z"),      dep: iso8601("2026-03-02T13:45:00Z"),      status: .Departed),
+        Stop(code: "ALDR", schArr: iso8601("2026-03-02T13:56:00Z"),      schDep: iso8601("2026-03-02T14:01:00Z"),      arr: iso8601("2026-03-02T13:56:00Z"),      dep: iso8601("2026-03-02T14:01:00Z"),      status: .Departed),
+        Stop(code: "GRIM", schArr: iso8601("2026-03-02T14:37:00Z"),      schDep: iso8601("2026-03-02T14:38:00Z"),      arr: iso8601("2026-03-02T14:37:00Z"),      dep: iso8601("2026-03-02T14:38:00Z"),      status: .Departed),
+        Stop(code: "SCAT", schArr: iso8601("2026-03-02T14:57:00Z"),      schDep: iso8601("2026-03-02T14:58:00Z"),      arr: iso8601("2026-03-02T14:57:00Z"),      dep: iso8601("2026-03-02T14:58:00Z"),      status: .Departed),
+        Stop(code: "NIAG", schArr: iso8601("2026-03-02T10:20:00-05:00"), schDep: iso8601("2026-03-02T10:28:00-05:00"), arr: iso8601("2026-03-02T10:17:00-05:00"), dep: iso8601("2026-03-02T10:28:00-05:00"), status: .Departed),
+        Stop(code: "NFL",  schArr: iso8601("2026-03-02T10:44:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T10:30:00-05:00"), dep: iso8601("2026-03-02T11:50:00-05:00"), status: .station),
+        Stop(code: "BFX",  schArr: iso8601("2026-03-02T12:23:00-05:00"), schDep: iso8601("2026-03-02T12:25:00-05:00"), arr: iso8601("2026-03-02T12:25:00-05:00"), dep: iso8601("2026-03-02T12:25:00-05:00"), status: .enroute),
+        Stop(code: "BUF",  schArr: iso8601("2026-03-02T12:36:00-05:00"), schDep: iso8601("2026-03-02T12:40:00-05:00"), arr: iso8601("2026-03-02T12:36:00-05:00"), dep: iso8601("2026-03-02T12:36:00-05:00"), status: .enroute),
+        Stop(code: "ROC",  schArr: iso8601("2026-03-02T13:30:00-05:00"), schDep: iso8601("2026-03-02T13:34:00-05:00"), arr: iso8601("2026-03-02T13:30:00-05:00"), dep: iso8601("2026-03-02T13:30:00-05:00"), status: .enroute),
+        Stop(code: "SYR",  schArr: iso8601("2026-03-02T14:44:00-05:00"), schDep: iso8601("2026-03-02T14:54:00-05:00"), arr: iso8601("2026-03-02T14:47:00-05:00"), dep: iso8601("2026-03-02T14:47:00-05:00"), status: .enroute),
+        Stop(code: "ROM",  schArr: iso8601("2026-03-02T15:35:00-05:00"), schDep: iso8601("2026-03-02T15:36:00-05:00"), arr: iso8601("2026-03-02T15:35:00-05:00"), dep: iso8601("2026-03-02T15:35:00-05:00"), status: .enroute),
+        Stop(code: "UCA",  schArr: iso8601("2026-03-02T15:51:00-05:00"), schDep: iso8601("2026-03-02T15:53:00-05:00"), arr: iso8601("2026-03-02T15:51:00-05:00"), dep: iso8601("2026-03-02T15:51:00-05:00"), status: .enroute),
+        Stop(code: "AMS",  schArr: iso8601("2026-03-02T16:53:00-05:00"), schDep: iso8601("2026-03-02T16:55:00-05:00"), arr: iso8601("2026-03-02T16:53:00-05:00"), dep: iso8601("2026-03-02T16:53:00-05:00"), status: .enroute),
+        Stop(code: "SDY",  schArr: iso8601("2026-03-02T17:39:00-05:00"), schDep: iso8601("2026-03-02T17:39:00-05:00"), arr: iso8601("2026-03-02T17:39:00-05:00"), dep: iso8601("2026-03-02T17:39:00-05:00"), status: .enroute),
+        Stop(code: "ALB",  schArr: iso8601("2026-03-02T18:05:00-05:00"), schDep: iso8601("2026-03-02T19:40:00-05:00"), arr: iso8601("2026-03-02T18:05:00-05:00"), dep: iso8601("2026-03-02T18:05:00-05:00"), status: .enroute),
+        Stop(code: "HUD",  schArr: iso8601("2026-03-02T20:01:00-05:00"), schDep: iso8601("2026-03-02T20:03:00-05:00"), arr: iso8601("2026-03-02T20:01:00-05:00"), dep: iso8601("2026-03-02T20:01:00-05:00"), status: .enroute),
+        Stop(code: "RHI",  schArr: iso8601("2026-03-02T20:23:00-05:00"), schDep: iso8601("2026-03-02T20:25:00-05:00"), arr: iso8601("2026-03-02T20:23:00-05:00"), dep: iso8601("2026-03-02T20:23:00-05:00"), status: .enroute),
+        Stop(code: "POU",  schArr: iso8601("2026-03-02T20:39:00-05:00"), schDep: iso8601("2026-03-02T20:40:00-05:00"), arr: iso8601("2026-03-02T20:39:00-05:00"), dep: iso8601("2026-03-02T20:39:00-05:00"), status: .enroute),
+        Stop(code: "CRT",  schArr: iso8601("2026-03-02T21:19:00-05:00"), schDep: iso8601("2026-03-02T21:21:00-05:00"), arr: iso8601("2026-03-02T21:19:00-05:00"), dep: iso8601("2026-03-02T21:19:00-05:00"), status: .enroute),
+        Stop(code: "YNY",  schArr: iso8601("2026-03-02T21:41:00-05:00"), schDep: iso8601("2026-03-02T21:42:00-05:00"), arr: iso8601("2026-03-02T21:41:00-05:00"), dep: iso8601("2026-03-02T21:41:00-05:00"), status: .enroute),
+        Stop(code: "NYP",  schArr: iso8601("2026-03-02T22:15:00-05:00"), schDep: iso8601("2026-03-02T22:15:00-05:00"), arr: iso8601("2026-03-02T22:03:00-05:00"), dep: iso8601("2026-03-02T22:03:00-05:00"), status: .enroute),
+    ]
+
+    // Empire Service: Niagara Falls → New York Penn
+    static let train280StopsFixture: [Stop] = [
+        Stop(code: "NFL", schArr: iso8601("2026-03-02T03:52:00-05:00"), schDep: iso8601("2026-03-02T03:52:00-05:00"), arr: iso8601("2026-03-02T03:52:00-05:00"), dep: iso8601("2026-03-02T03:52:00-05:00"), status: .Departed),
+        Stop(code: "BFX", schArr: iso8601("2026-03-02T04:28:00-05:00"), schDep: iso8601("2026-03-02T04:28:00-05:00"), arr: iso8601("2026-03-02T04:28:00-05:00"), dep: iso8601("2026-03-02T04:29:00-05:00"), status: .Departed),
+        Stop(code: "BUF", schArr: iso8601("2026-03-02T04:45:00-05:00"), schDep: iso8601("2026-03-02T04:45:00-05:00"), arr: iso8601("2026-03-02T04:40:00-05:00"), dep: iso8601("2026-03-02T04:45:00-05:00"), status: .Departed),
+        Stop(code: "ROC", schArr: iso8601("2026-03-02T05:40:00-05:00"), schDep: iso8601("2026-03-02T05:40:00-05:00"), arr: iso8601("2026-03-02T05:36:00-05:00"), dep: iso8601("2026-03-02T05:40:00-05:00"), status: .Departed),
+        Stop(code: "SYR", schArr: iso8601("2026-03-02T06:57:00-05:00"), schDep: iso8601("2026-03-02T07:06:00-05:00"), arr: iso8601("2026-03-02T06:50:00-05:00"), dep: iso8601("2026-03-02T07:20:00-05:00"), status: .Departed),
+        Stop(code: "ROM", schArr: iso8601("2026-03-02T07:45:00-05:00"), schDep: iso8601("2026-03-02T07:45:00-05:00"), arr: iso8601("2026-03-02T08:08:00-05:00"), dep: iso8601("2026-03-02T08:10:00-05:00"), status: .Departed),
+        Stop(code: "UCA", schArr: iso8601("2026-03-02T07:59:00-05:00"), schDep: iso8601("2026-03-02T07:59:00-05:00"), arr: iso8601("2026-03-02T08:22:00-05:00"), dep: iso8601("2026-03-02T08:24:00-05:00"), status: .Departed),
+        Stop(code: "AMS", schArr: iso8601("2026-03-02T09:01:00-05:00"), schDep: iso8601("2026-03-02T09:01:00-05:00"), arr: iso8601("2026-03-02T09:22:00-05:00"), dep: iso8601("2026-03-02T09:23:00-05:00"), status: .Departed),
+        Stop(code: "SDY", schArr: iso8601("2026-03-02T09:21:00-05:00"), schDep: iso8601("2026-03-02T09:21:00-05:00"), arr: iso8601("2026-03-02T09:40:00-05:00"), dep: iso8601("2026-03-02T09:43:00-05:00"), status: .Departed),
+        Stop(code: "ALB", schArr: iso8601("2026-03-02T09:42:00-05:00"), schDep: iso8601("2026-03-02T10:05:00-05:00"), arr: iso8601("2026-03-02T10:04:00-05:00"), dep: iso8601("2026-03-02T10:17:00-05:00"), status: .Departed),
+        Stop(code: "HUD", schArr: iso8601("2026-03-02T10:26:00-05:00"), schDep: iso8601("2026-03-02T10:28:00-05:00"), arr: iso8601("2026-03-02T10:38:00-05:00"), dep: iso8601("2026-03-02T10:42:00-05:00"), status: .Departed),
+        Stop(code: "RHI", schArr: iso8601("2026-03-02T10:49:00-05:00"), schDep: iso8601("2026-03-02T10:51:00-05:00"), arr: iso8601("2026-03-02T11:01:00-05:00"), dep: iso8601("2026-03-02T11:03:00-05:00"), status: .Departed),
+        Stop(code: "POU", schArr: iso8601("2026-03-02T11:10:00-05:00"), schDep: iso8601("2026-03-02T11:10:00-05:00"), arr: iso8601("2026-03-02T11:15:00-05:00"), dep: iso8601("2026-03-02T11:17:00-05:00"), status: .Departed),
+        Stop(code: "CRT", schArr: iso8601("2026-03-02T11:50:00-05:00"), schDep: iso8601("2026-03-02T11:50:00-05:00"), arr: iso8601("2026-03-02T11:54:00-05:00"), dep: iso8601("2026-03-02T11:54:00-05:00"), status: .enroute),
+        Stop(code: "NYP", schArr: iso8601("2026-03-02T12:45:00-05:00"), schDep: iso8601("2026-03-02T12:45:00-05:00"), arr: iso8601("2026-03-02T12:33:00-05:00"), dep: iso8601("2026-03-02T12:33:00-05:00"), status: .enroute)
+    ]
+
+    // Empire Service: New York Penn → Niagara Falls
+    static let train281StopsFixture: [Stop] = [
+        Stop(code: "NYP", schArr: iso8601("2026-03-02T10:20:00-05:00"), schDep: iso8601("2026-03-02T10:20:00-05:00"), arr: iso8601("2026-03-02T10:20:00-05:00"), dep: iso8601("2026-03-02T10:20:00-05:00"), status: .Departed),
+        Stop(code: "CRT", schArr: iso8601("2026-03-02T11:01:00-05:00"), schDep: iso8601("2026-03-02T11:01:00-05:00"), arr: iso8601("2026-03-02T11:03:00-05:00"), dep: iso8601("2026-03-02T11:05:00-05:00"), status: .Departed),
+        Stop(code: "POU", schArr: iso8601("2026-03-02T11:43:00-05:00"), schDep: iso8601("2026-03-02T11:43:00-05:00"), arr: iso8601("2026-03-02T11:43:00-05:00"), dep: iso8601("2026-03-02T11:43:00-05:00"), status: .enroute),
+        Stop(code: "RHI", schArr: iso8601("2026-03-02T12:00:00-05:00"), schDep: iso8601("2026-03-02T12:00:00-05:00"), arr: iso8601("2026-03-02T12:00:00-05:00"), dep: iso8601("2026-03-02T12:00:00-05:00"), status: .enroute),
+        Stop(code: "HUD", schArr: iso8601("2026-03-02T12:25:00-05:00"), schDep: iso8601("2026-03-02T12:25:00-05:00"), arr: iso8601("2026-03-02T12:25:00-05:00"), dep: iso8601("2026-03-02T12:25:00-05:00"), status: .enroute),
+        Stop(code: "ALB", schArr: iso8601("2026-03-02T12:50:00-05:00"), schDep: iso8601("2026-03-02T13:15:00-05:00"), arr: iso8601("2026-03-02T12:50:00-05:00"), dep: iso8601("2026-03-02T12:50:00-05:00"), status: .enroute),
+        Stop(code: "SDY", schArr: iso8601("2026-03-02T13:39:00-05:00"), schDep: iso8601("2026-03-02T13:39:00-05:00"), arr: iso8601("2026-03-02T13:39:00-05:00"), dep: iso8601("2026-03-02T13:39:00-05:00"), status: .enroute),
+        Stop(code: "AMS", schArr: iso8601("2026-03-02T13:57:00-05:00"), schDep: iso8601("2026-03-02T13:57:00-05:00"), arr: iso8601("2026-03-02T13:57:00-05:00"), dep: iso8601("2026-03-02T13:57:00-05:00"), status: .enroute),
+        Stop(code: "UCA", schArr: iso8601("2026-03-02T14:55:00-05:00"), schDep: iso8601("2026-03-02T14:55:00-05:00"), arr: iso8601("2026-03-02T14:55:00-05:00"), dep: iso8601("2026-03-02T14:55:00-05:00"), status: .enroute),
+        Stop(code: "ROM", schArr: iso8601("2026-03-02T15:11:00-05:00"), schDep: iso8601("2026-03-02T15:11:00-05:00"), arr: iso8601("2026-03-02T15:11:00-05:00"), dep: iso8601("2026-03-02T15:11:00-05:00"), status: .enroute),
+        Stop(code: "SYR", schArr: iso8601("2026-03-02T16:02:00-05:00"), schDep: iso8601("2026-03-02T16:02:00-05:00"), arr: iso8601("2026-03-02T16:02:00-05:00"), dep: iso8601("2026-03-02T16:02:00-05:00"), status: .enroute),
+        Stop(code: "ROC", schArr: iso8601("2026-03-02T17:28:00-05:00"), schDep: iso8601("2026-03-02T17:28:00-05:00"), arr: iso8601("2026-03-02T17:28:00-05:00"), dep: iso8601("2026-03-02T17:28:00-05:00"), status: .enroute),
+        Stop(code: "BUF", schArr: iso8601("2026-03-02T18:34:00-05:00"), schDep: iso8601("2026-03-02T18:34:00-05:00"), arr: iso8601("2026-03-02T18:34:00-05:00"), dep: iso8601("2026-03-02T18:34:00-05:00"), status: .enroute),
+        Stop(code: "BFX", schArr: iso8601("2026-03-02T18:55:00-05:00"), schDep: iso8601("2026-03-02T18:55:00-05:00"), arr: iso8601("2026-03-02T18:55:00-05:00"), dep: iso8601("2026-03-02T18:55:00-05:00"), status: .enroute),
+        Stop(code: "NFL", schArr: iso8601("2026-03-02T19:35:00-05:00"), schDep: iso8601("2026-03-02T19:35:00-05:00"), arr: iso8601("2026-03-02T19:31:00-05:00"), dep: iso8601("2026-03-02T19:31:00-05:00"), status: .enroute)
+    ]
+
+    // Empire Service: Niagara Falls → New York Penn
+    static let train284StopsFixture: [Stop] = [
+        Stop(code: "NFL", schArr: iso8601("2026-03-02T06:47:00-05:00"), schDep: iso8601("2026-03-02T06:47:00-05:00"), arr: iso8601("2026-03-02T06:47:00-05:00"), dep: iso8601("2026-03-02T06:47:00-05:00"), status: .Departed),
+        Stop(code: "BFX", schArr: iso8601("2026-03-02T07:22:00-05:00"), schDep: iso8601("2026-03-02T07:22:00-05:00"), arr: iso8601("2026-03-02T07:21:00-05:00"), dep: iso8601("2026-03-02T07:23:00-05:00"), status: .Departed),
+        Stop(code: "BUF", schArr: iso8601("2026-03-02T07:39:00-05:00"), schDep: iso8601("2026-03-02T07:39:00-05:00"), arr: iso8601("2026-03-02T07:34:00-05:00"), dep: iso8601("2026-03-02T07:39:00-05:00"), status: .Departed),
+        Stop(code: "ROC", schArr: iso8601("2026-03-02T08:34:00-05:00"), schDep: iso8601("2026-03-02T08:34:00-05:00"), arr: iso8601("2026-03-02T08:30:00-05:00"), dep: iso8601("2026-03-02T08:34:00-05:00"), status: .Departed),
+        Stop(code: "SYR", schArr: iso8601("2026-03-02T09:49:00-05:00"), schDep: iso8601("2026-03-02T09:59:00-05:00"), arr: iso8601("2026-03-02T09:49:00-05:00"), dep: iso8601("2026-03-02T10:06:00-05:00"), status: .Departed),
+        Stop(code: "ROM", schArr: iso8601("2026-03-02T10:37:00-05:00"), schDep: iso8601("2026-03-02T10:38:00-05:00"), arr: iso8601("2026-03-02T10:44:00-05:00"), dep: iso8601("2026-03-02T10:47:00-05:00"), status: .Departed),
+        Stop(code: "UCA", schArr: iso8601("2026-03-02T10:52:00-05:00"), schDep: iso8601("2026-03-02T10:52:00-05:00"), arr: iso8601("2026-03-02T11:00:00-05:00"), dep: iso8601("2026-03-02T11:02:00-05:00"), status: .Departed),
+        Stop(code: "AMS", schArr: iso8601("2026-03-02T11:54:00-05:00"), schDep: iso8601("2026-03-02T11:54:00-05:00"), arr: iso8601("2026-03-02T12:03:00-05:00"), dep: iso8601("2026-03-02T12:03:00-05:00"), status: .enroute),
+        Stop(code: "SDY", schArr: iso8601("2026-03-02T12:17:00-05:00"), schDep: iso8601("2026-03-02T12:17:00-05:00"), arr: iso8601("2026-03-02T12:20:00-05:00"), dep: iso8601("2026-03-02T12:20:00-05:00"), status: .enroute),
+        Stop(code: "ALB", schArr: iso8601("2026-03-02T12:39:00-05:00"), schDep: iso8601("2026-03-02T13:05:00-05:00"), arr: iso8601("2026-03-02T12:41:00-05:00"), dep: iso8601("2026-03-02T12:41:00-05:00"), status: .enroute),
+        Stop(code: "HUD", schArr: iso8601("2026-03-02T13:26:00-05:00"), schDep: iso8601("2026-03-02T13:28:00-05:00"), arr: iso8601("2026-03-02T13:26:00-05:00"), dep: iso8601("2026-03-02T13:26:00-05:00"), status: .enroute),
+        Stop(code: "RHI", schArr: iso8601("2026-03-02T13:49:00-05:00"), schDep: iso8601("2026-03-02T13:51:00-05:00"), arr: iso8601("2026-03-02T13:49:00-05:00"), dep: iso8601("2026-03-02T13:49:00-05:00"), status: .enroute),
+        Stop(code: "POU", schArr: iso8601("2026-03-02T14:10:00-05:00"), schDep: iso8601("2026-03-02T14:10:00-05:00"), arr: iso8601("2026-03-02T14:10:00-05:00"), dep: iso8601("2026-03-02T14:10:00-05:00"), status: .enroute),
+        Stop(code: "CRT", schArr: iso8601("2026-03-02T14:50:00-05:00"), schDep: iso8601("2026-03-02T14:50:00-05:00"), arr: iso8601("2026-03-02T14:50:00-05:00"), dep: iso8601("2026-03-02T14:50:00-05:00"), status: .enroute),
+        Stop(code: "YNY", schArr: iso8601("2026-03-02T15:11:00-05:00"), schDep: iso8601("2026-03-02T15:11:00-05:00"), arr: iso8601("2026-03-02T15:11:00-05:00"), dep: iso8601("2026-03-02T15:11:00-05:00"), status: .enroute),
+        Stop(code: "NYP", schArr: iso8601("2026-03-02T15:45:00-05:00"), schDep: iso8601("2026-03-02T15:45:00-05:00"), arr: iso8601("2026-03-02T15:34:00-05:00"), dep: iso8601("2026-03-02T15:34:00-05:00"), status: .enroute)
+    ]
 }

@@ -42,10 +42,10 @@ struct StationsService: Sendable {
         Logger.service.debug("Fetching stations")
         let stations = try await loadQueue
             .enqueue { _ in
-                try await fetchAllStationsProvider.fetchAllStations()
+                try await fetchAllStationsProvider.fetchStations()
             }
         Logger.service.debug("Saving stations")
-        try await writeStationsProvider.writeStations(Array(stations.values))
+        try await writeStationsProvider.writeStations(stations)
     }
     func writeUserDataForStation(code: String,
                                  isFavorite: Bool?) async throws {
@@ -53,7 +53,7 @@ struct StationsService: Sendable {
             .writeUserDataForStation(code: code,
                                      isFavorite: isFavorite)
     }
-    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
+    func stations() async throws -> any AsyncThrowingSendableSequence<[Station]> {
         try await stationsStreamProvider.stations()
     }
 }

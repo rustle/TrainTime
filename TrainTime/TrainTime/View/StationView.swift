@@ -4,18 +4,16 @@ import SwiftUI
 struct StationView: View {
     struct ListContainer: View {
         let trains: [TrainRow]
-        let stationCode: String
         var body: some View {
             List(trains) { row in
                 TrainView(train: row.train,
-                          stationCode: stationCode)
+                          stop: row.stop)
             }
         }
     }
     @State var state: StationViewState
     var body: some View {
-        ListContainer(trains: state.trains,
-                      stationCode: state.station.code)
+        ListContainer(trains: state.trains)
             .navigationTitle(state.title)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

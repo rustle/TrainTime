@@ -9,11 +9,11 @@ struct StationService: Sendable {
         self.writeStationProvider = writeStationProvider
         self.stationStreamProvider = stationStreamProvider
     }
-    func load(id: String) async throws {
-        let station = try await fetchStationProvider.fetchStation(id: id)
+    func load(stationCode: String) async throws {
+        let station = try await fetchStationProvider.fetchStation(code: stationCode)
         try await writeStationProvider.writeStation(station)
     }
-    func station(code: String) async throws -> any AsyncThrowingSendableSequence<TTStation?> {
+    func station(code: String) async throws -> any AsyncThrowingSendableSequence<Station?> {
         try await stationStreamProvider.station(code: code)
     }
 }

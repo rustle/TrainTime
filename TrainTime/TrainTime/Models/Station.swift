@@ -6,7 +6,7 @@ import GRDB
 import Observation
 
 ///
-struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvertible {
+struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvertible {
     private static func formattedPostalAddress(
         address1: String?,
         address2: String?,
@@ -47,6 +47,7 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
     let zip: String?
     ///
     let trainIdentifiers: [String]
+    ///
     var location: CLLocation? {
         guard let lat, let lon else {
             return nil
@@ -54,6 +55,7 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         return .init(latitude: lat,
                      longitude: lon)
     }
+    ///
     let formattedPostalAddress: String
     // MARK: - Search
     ///
@@ -92,13 +94,9 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         self.city = city
         self.zip = zip
         self.trainIdentifiers = trainIdentifiers
-        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-        normalizedCode = code.folding(options: options,
-                                      locale: .current)
-        normalizedName = name?.folding(options: options,
-                                       locale: .current)
-        normalizedCity = city?.folding(options: options,
-                                       locale: .current)
+        normalizedCode = code.normalized
+        normalizedName = name?.normalized
+        normalizedCity = city?.normalized
         isFavorite = nil
         formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
                                                              address2: address2,
@@ -117,13 +115,40 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
         city = stationMetadata.city
         zip = stationMetadata.zip
         trainIdentifiers = stationMetadata.trains
-        let options: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-        normalizedCode = stationMetadata.code.folding(options: options,
-                                                      locale: .current)
-        normalizedName = stationMetadata.name?.folding(options: options,
-                                                       locale: .current)
-        normalizedCity = stationMetadata.city?.folding(options: options,
-                                                       locale: .current)
+        normalizedCode = code.normalized
+        normalizedName = name?.normalized
+        normalizedCity = city?.normalized
+        isFavorite = nil
+        formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
+                                                             address2: address2,
+                                                             city: city,
+                                                             zip: zip)
+    }
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decodeIfPresent(String.self,
+                                                  forKey: .name)
+        self.code = try container.decode(String.self,
+                                         forKey: .code)
+        self.tz = try container.decodeIfPresent(String.self,
+                                                forKey: .tz)
+        self.lat = try container.decodeIfPresent(Double.self,
+                                                 forKey: .lat)
+        self.lon = try container.decodeIfPresent(Double.self,
+                                                 forKey: .lon)
+        self.address1 = try container.decodeIfPresent(String.self,
+                                                      forKey: .address1)
+        self.address2 = try container.decodeIfPresent(String.self,
+                                                      forKey: .address2)
+        self.city = try container.decodeIfPresent(String.self,
+                                                  forKey: .city)
+        self.zip = try container.decodeIfPresent(String.self,
+                                                 forKey: .zip)
+        self.trainIdentifiers = try container.decode([String].self,
+                                                     forKey: .trainIdentifiers)
+        normalizedCode = code.normalized
+        normalizedName = name?.normalized
+        normalizedCity = city?.normalized
         isFavorite = nil
         formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
                                                              address2: address2,
@@ -131,5 +156,3 @@ struct TTStation: Codable, Equatable, Hashable, Sendable, CustomDebugStringConve
                                                              zip: zip)
     }
 }
-
-typealias TTStationResponse = [String: TTStation]

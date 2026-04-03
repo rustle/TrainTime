@@ -43,7 +43,7 @@ struct Stop: Codable, Sendable, Equatable, CustomDebugStringConvertible {
         self.status = status
     }
     ///
-    init(station: Station) {
+    init(station: Amtrak.Station) {
         code = station.code
         schArr = station.schArr
         schDep = station.schDep

@@ -2,7 +2,7 @@ import AsyncAlgorithms
 import GRDB
 
 protocol StationsStreamProvider: Sendable {
-    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]>
+    func stations() async throws -> any AsyncThrowingSendableSequence<[Station]>
 }
 
 extension DatabasePool {
@@ -16,20 +16,20 @@ extension DatabasePool {
             }
             .values(in: self)
     }
-    fileprivate func stations(favorites: [String]) -> AsyncValueObservation<[TTStation]> {
-        let code = TTStation.Columns.code
-        let isFavorite = TTStation.Columns.isFavorite
+    fileprivate func stations(favorites: [String]) -> AsyncValueObservation<[Station]> {
+        let code = Station.Columns.code
+        let isFavorite = Station.Columns.isFavorite
         let isFavoriteAlias = SQL("(CASE WHEN \(code) IN \(favorites) THEN 1 ELSE NULL END) AS \(isFavorite)")
         let isFavoriteOrdering = favorites.contains(code).desc
         return ValueObservation
             .tracking { db in
-                try TTStation
+                try Station
                     .annotated(with: [isFavoriteAlias])
                     .order(
                         isFavoriteOrdering,
                         coalesce([
-                            TTStation.Columns.normalizedName,
-                            TTStation.Columns.normalizedCode
+                            Station.Columns.normalizedName,
+                            Station.Columns.normalizedCode
                         ])
                             .asc
                     )
@@ -42,7 +42,7 @@ extension DatabasePool {
 struct StationsStreamDatabaseProvider: StationsStreamProvider {
     let cacheConnection: DatabasePool
     let userDataConnection: DatabasePool
-    func stations() async throws -> any AsyncThrowingSendableSequence<[TTStation]> {
+    func stations() async throws -> any AsyncThrowingSendableSequence<[Station]> {
         userDataConnection
             .stationFavorites()
             .flatMapLatest { [cacheConnection] favorites in

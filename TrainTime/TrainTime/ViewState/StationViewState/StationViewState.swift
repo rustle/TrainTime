@@ -7,13 +7,13 @@ import SwiftConcurrencySerialQueue
 @MainActor
 @Observable
 final class StationViewState {
-    private(set) var station: TTStation
+    private(set) var station: Station
     var title: String {
         station.name ?? station.code
     }
     private(set) var trains: [TrainRow] = []
     let component: StationComponent
-    init(station: TTStation,
+    init(station: Station,
          component: StationComponent) {
         self.station = station
         self.component = component
@@ -39,7 +39,7 @@ final class StationViewState {
             if (refreshStation) {
                 Logger.viewState.debug("StationViewState: Refresh station")
                 try await loadQueue.enqueue { [stationService=self.component.stationService] _ in
-                    try await stationService.load(id: stationCode)
+                    try await stationService.load(stationCode: stationCode)
                 }
             }
             Logger.viewState.debug("StationViewState: Refresh trains")
@@ -48,7 +48,8 @@ final class StationViewState {
                 .enqueue { [trainService=self.component.trainService] _ in
                     try await trainService
                         .load(batchSize: 3,
-                              identifiers: trainIdentifiers)
+                              identifiers: trainIdentifiers,
+                              at: stationCode)
                 }
         } catch {
             Logger.viewState.error("StationViewState: load() error \(error)")
@@ -72,21 +73,15 @@ final class StationViewState {
             }
         }
         if trainsTask == nil {
-            let trainsStream = try await self.component.trainService.trains(identifiers: station.trainIdentifiers,
-                                                                                       stationCode: station.code)
-            trainsTask = Task { @MainActor [weak self, stationCode=station.code] in
+            let trainsStream = try await self.component.trainService
+                .trains(identifiers: station.trainIdentifiers,
+                        at: station.code)
+            trainsTask = Task { @MainActor [weak self] in
                 for try await trains in trainsStream {
                     guard let self else {
                         break
                     }
-                    self.trains = trains.compactMap { train in
-                        // TODO: This seems silly to do in this layer
-                        guard let stop = train.stops[stationCode] else {
-                            return nil
-                        }
-                        return TrainRow(train: train,
-                                        stop: stop)
-                    }
+                    self.trains = trains.compactMap(TrainRow.init(trainAtStop:))
                 }
             }
         }

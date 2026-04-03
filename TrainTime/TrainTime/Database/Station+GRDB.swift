@@ -1,7 +1,7 @@
 import Foundation
 import GRDB
 
-extension TTStation: TableRecord {
+extension Station: TableRecord {
     static let databaseTableName = "station"
     enum Columns {
         static let code = Column("code")
@@ -25,13 +25,13 @@ extension TTStation: TableRecord {
     }
 }
 
-extension TTStation: Identifiable {
+extension Station: Identifiable {
     var id: String {
         code
     }
 }
 
-extension TTStation: FetchableRecord {
+extension Station: FetchableRecord {
     init(row: Row) throws {
         code = row[Columns.code]
         name = row[Columns.name]
@@ -51,7 +51,7 @@ extension TTStation: FetchableRecord {
     }
 }
 
-extension TTStation: PersistableRecord {
+extension Station: PersistableRecord {
     func encode(to container: inout PersistenceContainer) throws {
         container[Columns.code] = code
         container[Columns.name] = name

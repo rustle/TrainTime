@@ -10,34 +10,43 @@ final class TestUserDataProvider: WriteUserDataForStationProvider, Sendable {
 
 // MARK: - TestAPIService
 
-private let allStations: TTStationResponse = [
-    "UCA": .ucaFixture,
-    "ROC": .rocFixture,
-    "SYR": .syrFixture,
-    "NYP": .nypFixture,
+private let allStations: [TrainTime.Station] = [
+    .ucaFixture,
+    .rocFixture,
+    .syrFixture,
+    .nypFixture,
 ]
 
-private let allTrains: [String: TTTrain] = [
-    "48-1":  .train48Fixture,
-    "63-2":  .train63Fixture,
-    "64-2":  .train64Fixture,
-    "280-2": .train280Fixture,
-    "281-2": .train281Fixture,
-    "284-2": .train284Fixture,
+private let allTrains: [TrainWithStops] = [
+    TrainWithStops(train: .train48Fixture,
+                   stops: .train48StopsFixture),
+    TrainWithStops(train: .train63Fixture,
+                   stops: .train63StopsFixture),
+    TrainWithStops(train: .train64Fixture,
+                   stops: .train64StopsFixture),
+    TrainWithStops(train: .train280Fixture,
+                   stops: .train280StopsFixture),
+    TrainWithStops(train: .train281Fixture,
+                   stops: .train281StopsFixture),
+    TrainWithStops(train: .train284Fixture,
+                   stops: .train284StopsFixture),
 ]
 
 final class TestAPIService: Sendable, FetchAllStationsProvider, FetchStationProvider, FetchTrainProvider {
-    func fetchAllStations() async throws -> TrainTime.TTStationResponse {
+    func fetchStations() async throws -> [TrainTime.Station] {
         allStations
     }
 
-    func fetchStation(id: String) async throws -> TrainTime.TTStation {
-        guard let station = allStations[id] else { throw ClientError.noStationFound(id: id) }
+    func fetchStation(code: String) async throws -> TrainTime.Station {
+        guard let station = allStations.first(where: { $0.code == code }) else { throw AmtrakClientError.noStationFound(id: code) }
         return station
     }
 
-    func fetchTrain(id: String) async throws -> TrainTime.TTTrain {
-        guard let train = allTrains[id] else { throw ClientError.noTrainFound(id: id) }
-        return train
+    func fetchTrain(identifier: String,
+                    at stop: String) async throws -> TrainAtStop {
+        guard let trainWithStops = allTrains.first(where: { $0.train.trainID == identifier }) else { throw AmtrakClientError.noTrainFound(id: identifier) }
+        guard let stop = trainWithStops.stops.first(where: { $0.code == stop }) else { throw AmtrakClientError.noTrainFound(id: identifier) }
+        return TrainAtStop(train: trainWithStops.train,
+                           stop: stop)
     }
 }

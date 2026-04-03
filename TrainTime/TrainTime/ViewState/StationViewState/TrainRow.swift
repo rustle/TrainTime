@@ -4,12 +4,11 @@ struct TrainRow: Identifiable, Sendable, Comparable {
         lhs.stop.schArr < rhs.stop.schArr
     }
     let id: String
-    let train: TTTrain
+    let train: Train
     let stop: Stop
-    init(train: TTTrain,
-         stop: Stop) {
-        self.train = train
-        self.stop = stop
-        self.id = train.trainID
+    init(trainAtStop: TrainAtStop) {
+        self.train = trainAtStop.train
+        self.stop = trainAtStop.stop
+        self.id = train.trainID + stop.code
     }
 }

@@ -1,9 +1,9 @@
 import Amtrak
 import Foundation
-import Observation
-import os
+import GRDB
 
-struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
+///
+struct Train: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     /// Name of the train route
     let routeName: String?
     /// Train number
@@ -16,8 +16,6 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
     let lat: Double?
     /// Longitude of the train
     let lon: Double?
-    ///
-    var stops: [String:Stop]
     /// Calculated icon color for the frontend
     let iconColor: String?
     /// Direction the train is heading in the 8 cardinal directions/
@@ -74,7 +72,6 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
          lat: Double? = nil,
          lon: Double? = nil,
          iconColor: String? = nil,
-         stops: [String:Stop],
          heading: Heading? = nil,
          eventCode: String? = nil,
          eventTZ: String? = nil,
@@ -103,7 +100,6 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
         self.lat = lat
         self.lon = lon
         self.iconColor = iconColor
-        self.stops = stops
         self.heading = heading
         self.eventCode = eventCode
         self.eventTZ = eventTZ
@@ -126,7 +122,7 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
         self.onlyOfTrainNum = onlyOfTrainNum
         self.alerts = alerts
     }
-    init(train: Train) {
+    init(train: Amtrak.Train) {
         routeName = train.routeName
         trainNum = train.trainNum
         trainNumRaw = train.trainNumRaw
@@ -134,9 +130,6 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
         lat = train.lat
         lon = train.lon
         iconColor = train.iconColor
-        stops = train.stations.reduce(into: [:]) { accumulator, station in
-            accumulator[station.code] = Stop(station: station)
-        }
         heading = train.heading
         eventCode = train.eventCode
         eventTZ = train.eventTZ
@@ -160,5 +153,3 @@ struct TTTrain: Codable, Sendable, Equatable, CustomDebugStringConvertible {
         alerts = train.alerts
     }
 }
-
-typealias TTTrainResponse = [String:TTTrain]

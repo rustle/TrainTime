@@ -15,7 +15,7 @@ final class StationRow: Identifiable, Comparable, Hashable, Sendable, CustomDebu
     // MARK: - Data
     let id: String
     let title: String
-    let station: TTStation
+    let station: Station
     // MARK: - Debugging
     var debugDescription: String {
         station.debugDescription
@@ -25,7 +25,7 @@ final class StationRow: Identifiable, Comparable, Hashable, Sendable, CustomDebu
         hasher.combine(station)
     }
     // MARK: - Init
-    init(station: TTStation) {
+    init(station: Station) {
         title = station.name ?? station.code
         id = station.code + station.trainIdentifiers.joined()
         self.station = station

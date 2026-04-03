@@ -2,8 +2,11 @@ import Amtrak
 import Foundation
 import GRDB
 
-extension TTTrain: TableRecord {
+extension Train: TableRecord {
     static let databaseTableName = "train"
+}
+
+extension Train {
     enum Columns {
         static let trainID = Column("trainID")
         static let routeName = Column("routeName")
@@ -36,18 +39,18 @@ extension TTTrain: TableRecord {
     }
 }
 
-extension TTTrain {
-    static let stopRecords = hasMany(StopRecord.self, using: ForeignKey(["trainID"]))
+extension Train {
+    static let stopRecords = hasMany(StopRecord.self,
+                                     using: ForeignKey(["trainID"]))
 }
 
-extension TTTrain: Identifiable {
+extension Train: Identifiable {
     var id: String {
         trainID
     }
 }
 
-extension TTTrain: FetchableRecord {
-    /// Fetches the train's scalar fields. Stops must be loaded separately via StopRecord.
+extension Train: FetchableRecord {
     init(row: Row) throws {
         routeName = row[Columns.routeName]
         trainNum = row[Columns.trainNum]
@@ -77,12 +80,10 @@ extension TTTrain: FetchableRecord {
         providerShort = row[Columns.providerShort]
         onlyOfTrainNum = row[Columns.onlyOfTrainNum]
         alerts = try JSONDecoder().decode([TrainAlert].self, from: row[Columns.alerts])
-        stops = [:]
     }
 }
 
-extension TTTrain: PersistableRecord {
-    /// Persists the train's scalar fields. Stops must be saved separately via StopRecord.
+extension Train: PersistableRecord {
     func encode(to container: inout PersistenceContainer) throws {
         container[Columns.trainID] = trainID
         container[Columns.routeName] = routeName
@@ -113,4 +114,7 @@ extension TTTrain: PersistableRecord {
         container[Columns.onlyOfTrainNum] = onlyOfTrainNum
         container[Columns.alerts] = try JSONEncoder().encode(alerts)
     }
+}
+
+extension TrainAtStop: FetchableRecord {
 }

@@ -2,7 +2,7 @@ import MapKit
 import SwiftUI
 
 struct StationLocationView: View {
-    let station: TTStation
+    let station: Station
     var body: some View {
         List {
             if !station.formattedPostalAddress.isEmpty {

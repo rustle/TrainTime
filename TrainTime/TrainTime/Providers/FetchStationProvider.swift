@@ -1,5 +1,5 @@
 protocol FetchStationProvider: Sendable {
-    func fetchStation(id: String) async throws -> TTStation
+    func fetchStation(code: String) async throws -> Station
 }
 
 extension APIService: FetchStationProvider {}

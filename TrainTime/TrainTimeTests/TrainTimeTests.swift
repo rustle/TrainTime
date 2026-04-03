@@ -27,12 +27,12 @@ extension AsyncSequence {
 struct TrainTimeTests {
     @Test func fetchAllStationsContainsUCA() async throws {
         let apiService = TestAPIService()
-        let stations = try await apiService.fetchAllStations()
-        #expect(stations["UCA"] == .ucaFixture)
+        let stations = try await apiService.fetchStations()
+        #expect(stations[0] == .ucaFixture)
     }
     @Test func fetchStationUCA() async throws {
         let apiService = TestAPIService()
-        let station = try await apiService.fetchStation(id: "UCA")
+        let station = try await apiService.fetchStation(code: "UCA")
         #expect(station == .ucaFixture)
     }
     @Test func stationsServiceLoadsAllStations() async throws {
@@ -54,7 +54,7 @@ struct TrainTimeTests {
             try await service.stations().firstArrayFromStream()
         )
 
-        let fixtures: Set<TTStation> = [.ucaFixture, .rocFixture, .syrFixture, .nypFixture]
+        let fixtures: Set<Station> = [.ucaFixture, .rocFixture, .syrFixture, .nypFixture]
         #expect(Set(stations) == fixtures)
     }
     @Test func stationServiceLoadsUCAAndTrain48() async throws {
@@ -74,9 +74,10 @@ struct TrainTimeTests {
             trainsStreamProvider: testDB.cacheConnection
         )
 
-        let ucaTrainIdentifiers = TTStation.ucaFixture.trainIdentifiers
-        try await stationService.load(id: "UCA")
-        try await trainService.load(identifiers: ucaTrainIdentifiers)
+        let ucaTrainIdentifiers = Station.ucaFixture.trainIdentifiers
+        try await stationService.load(stationCode: "UCA")
+        try await trainService.load(identifiers: ucaTrainIdentifiers,
+                                    at: "UCA")
 
         let station = try #require(
             try await stationService.station(code: "UCA")
@@ -85,14 +86,14 @@ struct TrainTimeTests {
 
         let trains = try #require(
             try await trainService.trains(identifiers: ucaTrainIdentifiers,
-                                          stationCode: "UCA")
+                                          at: "UCA")
                 .firstArrayFromStream()
         )
 
         #expect(station == .ucaFixture)
-        #expect(trains.map(\.trainID) == ["280-2", "284-2", "63-2", "48-1", "281-2", "64-2"])
+        #expect(trains.map(\.train.trainID) == ["280-2", "284-2", "63-2", "48-1", "281-2", "64-2"])
     }
-    @Test func trainsStreamWithStationCodeOnlyLoadsStopForThatStation() async throws {
+    @Test func trainsStreamWithStationCodeLoadsStopForThatStation() async throws {
         let testDB = try TestDatabase.make()
         defer { try? testDB.closeAndDelete() }
         try await testDB.runMigrations()
@@ -103,37 +104,18 @@ struct TrainTimeTests {
             trainsStreamProvider: testDB.cacheConnection
         )
 
-        let identifiers = TTStation.ucaFixture.trainIdentifiers
-        try await trainService.load(identifiers: identifiers)
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        try await trainService.load(identifiers: identifiers,
+                                    at: "UCA")
 
         let trains = try #require(
             try await trainService.trains(identifiers: identifiers,
-                                                       stationCode: "UCA")
+                                          at: "UCA")
                 .firstArrayFromStream()
         )
 
         for train in trains {
-            #expect(train.stops.keys.allSatisfy { $0 == "UCA" })
+            #expect(train.stop.code == "UCA")
         }
-    }
-    @Test func trainsStreamWithoutStationCodeLoadsAllStops() async throws {
-        let testDB = try TestDatabase.make()
-        defer { try? testDB.closeAndDelete() }
-        try await testDB.runMigrations()
-
-        let trainService = TrainService(
-            fetchTrainProvider: TestAPIService(),
-            writeTrainsProvider: testDB.cacheConnection,
-            trainsStreamProvider: testDB.cacheConnection
-        )
-
-        try await trainService.load(identifiers: ["48-1"])
-
-        let train = try #require(
-            try await trainService.trains(identifiers: ["48-1"],
-                                          stationCode: nil)
-                .firstElementFromFirstArrayFromStream()
-        )
-        #expect(train.stops == TTTrain.train48Fixture.stops)
     }
 }
