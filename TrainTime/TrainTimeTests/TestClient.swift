@@ -45,7 +45,7 @@ final class TestAPIService: Sendable, FetchAllStationsProvider, FetchStationProv
     func fetchTrain(identifier: String,
                     at stop: String) async throws -> TrainAtStop {
         guard let trainWithStops = allTrains.first(where: { $0.train.trainID == identifier }) else { throw AmtrakClientError.noTrainFound(id: identifier) }
-        guard let stop = trainWithStops.stops.first(where: { $0.code == stop }) else { throw AmtrakClientError.noTrainFound(id: identifier) }
+        guard let stop = trainWithStops.stops.first(where: { $0.code == stop }) else { throw AmtrakClientError.noStationFound(id: stop) }
         return TrainAtStop(train: trainWithStops.train,
                            stop: stop)
     }
