@@ -129,7 +129,12 @@ struct PreviewAppComponent: AppDependency {
         func station(code: String) async throws -> any AsyncThrowingSendableSequence<Station?> {
             _station
         }
-        func writeTrainAtStop(_ trains: [TrainAtStop]) async throws {
+        func writeTrainAtStop(_ trains: [TrainAtStop],
+                              at stop: String,
+                              keeping identifiers: Set<String>) async throws {
+            self.trains = self.trains.filter { _, value in
+                value.stop.code != stop || identifiers.contains(value.train.trainID)
+            }
             for train in trains {
                 self.trains["\(train.train.trainID):\(train.stop.code)"] = train
             }
