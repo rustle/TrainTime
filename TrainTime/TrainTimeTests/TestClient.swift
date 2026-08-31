@@ -50,3 +50,32 @@ final class TestAPIService: Sendable, FetchAllStationsProvider, FetchStationProv
                            stop: stop)
     }
 }
+
+// MARK: - TestFailingAPIService
+
+/// Wraps `TestAPIService`, failing the named identifiers with a chosen error.
+struct TestFailingAPIService: Sendable, FetchTrainProvider {
+    enum Failure: Error {
+        case transient
+    }
+    /// The error the real `APIService` throws when a train doesn't call at a station.
+    static func noStationFound(id: String) -> any Error {
+        AmtrakClientError.noStationFound(id: id)
+    }
+    let failing: Set<String>
+    let error: any Error
+    private let wrapped = TestAPIService()
+    init(failing: Set<String>,
+         error: any Error) {
+        self.failing = failing
+        self.error = error
+    }
+    func fetchTrain(identifier: String,
+                    at stop: String) async throws -> TrainAtStop {
+        guard !failing.contains(identifier) else {
+            throw error
+        }
+        return try await wrapped.fetchTrain(identifier: identifier,
+                                            at: stop)
+    }
+}

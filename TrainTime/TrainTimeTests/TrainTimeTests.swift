@@ -118,4 +118,65 @@ struct TrainTimeTests {
             #expect(train.stop.code == "UCA")
         }
     }
+    @Test func trainThatNoLongerStopsAtStationIsRemoved() async throws {
+        let testDB = try TestDatabase.make()
+        defer { try? testDB.closeAndDelete() }
+        try await testDB.runMigrations()
+
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        try await TrainService(fetchTrainProvider: TestAPIService(),
+                               writeTrainsProvider: testDB.cacheConnection,
+                               trainsStreamProvider: testDB.cacheConnection)
+            .load(identifiers: identifiers,
+                  at: "UCA")
+
+        // 48-1 stops calling at UCA.
+        let trainService = TrainService(
+            fetchTrainProvider: TestFailingAPIService(failing: ["48-1"],
+                                                      error: TestFailingAPIService.noStationFound(id: "UCA")),
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
+        )
+        try await trainService.load(identifiers: identifiers,
+                                    at: "UCA")
+
+        let trains = try #require(
+            try await trainService.trains(identifiers: identifiers,
+                                          at: "UCA")
+                .firstArrayFromStream()
+        )
+
+        let identifiersAtStop: [String] = trains.map(\.train.trainID)
+        #expect(!identifiersAtStop.contains("48-1"))
+    }
+    @Test func transientFetchFailureKeepsPersistedStop() async throws {
+        let testDB = try TestDatabase.make()
+        defer { try? testDB.closeAndDelete() }
+        try await testDB.runMigrations()
+
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        try await TrainService(fetchTrainProvider: TestAPIService(),
+                               writeTrainsProvider: testDB.cacheConnection,
+                               trainsStreamProvider: testDB.cacheConnection)
+            .load(identifiers: identifiers,
+                  at: "UCA")
+
+        // 48-1 fails to fetch, but still stops at UCA as far as anyone knows.
+        let trainService = TrainService(
+            fetchTrainProvider: TestFailingAPIService(failing: ["48-1"],
+                                                      error: TestFailingAPIService.Failure.transient),
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
+        )
+        try await trainService.load(identifiers: identifiers,
+                                    at: "UCA")
+
+        let trains = try #require(
+            try await trainService.trains(identifiers: identifiers,
+                                          at: "UCA")
+                .firstArrayFromStream()
+        )
+
+        #expect(trains.map(\.train.trainID).contains("48-1"))
+    }
 }
