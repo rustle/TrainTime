@@ -138,20 +138,51 @@ struct PreviewAppComponent: AppDependency {
             for train in trains {
                 self.trains["\(train.train.trainID):\(train.stop.code)"] = train
             }
-            _trainsContinuation.yield(trains)
+            // Match the database: emit everything still known for this stop,
+            // not just the trains this write happened to bring in.
+            let known = trainsAtStop(stop)
+            for continuation in trainsContinuations[stop, default: [:]].values {
+                continuation.yield(known)
+            }
         }
         func trains(identifiers: [String],
                     at stop: String) async throws -> any AsyncThrowingSendableSequence<[TrainAtStop]> {
-            _trains
+            // One stream per observer, kept per stop. A second observer must
+            // not end the first one's stream. Ending it strands that view,
+            // because a completed stream leaves StationViewState holding a
+            // claim on identifiers it is no longer observing, so it never
+            // rebuilds.
+            let (stream, continuation) = AsyncThrowingStream<[TrainAtStop], any Error>.makeStream()
+            let token = UUID()
+            trainsContinuations[stop, default: [:]][token] = continuation
+            continuation.onTermination = { [weak self] _ in
+                Task { [weak self] in
+                    await self?.removeTrainsContinuation(token,
+                                                         at: stop)
+                }
+            }
+            // Deliver what is already known, the way a database observation
+            // does, so a rebuilt observation isn't empty until the next write.
+            continuation.yield(trainsAtStop(stop))
+            return stream
+        }
+        private func removeTrainsContinuation(_ token: UUID,
+                                              at stop: String) {
+            trainsContinuations[stop]?.removeValue(forKey: token)
+            if trainsContinuations[stop]?.isEmpty == true {
+                trainsContinuations.removeValue(forKey: stop)
+            }
+        }
+        private func trainsAtStop(_ stop: String) -> [TrainAtStop] {
+            trains.values.filter { $0.stop.code == stop }
         }
         private let _stations: AsyncThrowingStream<[Station], any Error>
         private let _userData: AsyncThrowingStream<Set<String>, any Error>
         private let _station: AsyncThrowingStream<Station?, any Error>
-        private let _trains: AsyncThrowingStream<[TrainAtStop], any Error>
         let _stationsContinuation: AsyncThrowingStream<[Station], any Error>.Continuation
         let _userDataContinuation: AsyncThrowingStream<Set<String>, any Error>.Continuation
         let _stationContinuation: AsyncThrowingStream<Station?, any Error>.Continuation
-        let _trainsContinuation: AsyncThrowingStream<[TrainAtStop], any Error>.Continuation
+        private var trainsContinuations: [String: [UUID: AsyncThrowingStream<[TrainAtStop], any Error>.Continuation]] = [:]
         init() {
             let (stations, stationsContinuation) = AsyncThrowingStream<[Station], any Error>.makeStream()
             _stations = stations
@@ -162,9 +193,6 @@ struct PreviewAppComponent: AppDependency {
             let (station, stationContinuation) = AsyncThrowingStream<Station?, any Error>.makeStream()
             _station = station
             _stationContinuation = stationContinuation
-            let (trains, trainsContinuation) = AsyncThrowingStream<[TrainAtStop], any Error>.makeStream()
-            _trains = trains
-            _trainsContinuation = trainsContinuation
         }
     }
     func makeStationListComponent() -> StationListComponent {
