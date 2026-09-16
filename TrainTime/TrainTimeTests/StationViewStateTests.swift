@@ -161,7 +161,7 @@ struct StationViewStateTests {
             harness.state.trains.map(\.train.trainID) == ["48-1"]
         })
     }
-    @Test func aChangedTrainListRebuildsTheObservationAndDropsTheOldStream() async throws {
+    @Test func changedTrainListRebuildsTheObservationAndDropsTheOldStream() async throws {
         let harness = Harness()
         try await harness.state.load()
 
@@ -188,7 +188,7 @@ struct StationViewStateTests {
             harness.state.trains.map(\.train.trainID) == ["48-1"]
         })
     }
-    @Test func anUnchangedTrainListIsNotObservedTwice() async throws {
+    @Test func unchangedTrainListIsNotObservedTwice() async throws {
         let harness = Harness()
         try await harness.state.load()
 
@@ -212,7 +212,7 @@ struct StationViewStateTests {
         // And the trains load keeps exactly that list, not the stale one.
         #expect(await harness.writeTrains.kept == [Set(["48-1", "63-2"])])
     }
-    @Test func aFailedObservationReleasesItsClaimSoTheNextLoadRetries() async throws {
+    @Test func failedObservationReleasesItsClaimSoTheNextLoadRetries() async throws {
         let harness = Harness()
         await harness.trainsStreams.failNext()
 
@@ -223,7 +223,7 @@ struct StationViewStateTests {
         try await harness.state.load()
         #expect(await harness.trainsStreams.requests.count == 1)
     }
-    @Test func aFailedStationObservationIsRebuiltByTheNextLoad() async throws {
+    @Test func failedStationObservationIsRebuiltByTheNextLoad() async throws {
         let harness = Harness()
         try await harness.state.load()
         #expect(await harness.stationStreams.requestCount == 1)
@@ -239,7 +239,7 @@ struct StationViewStateTests {
             await harness.trainsStreams.requests.count == 2
         })
     }
-    @Test func aNilStationKeepsTheObservationAlive() async throws {
+    @Test func nilStationKeepsTheObservationAlive() async throws {
         let harness = Harness()
         try await harness.state.load()
 
