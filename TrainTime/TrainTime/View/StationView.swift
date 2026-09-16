@@ -1,26 +1,66 @@
 import Amtrak
 import SwiftUI
 
-struct StationView: View {
-    struct ListContainer: View {
-        let trains: [TrainRow]
-        var body: some View {
-            List(trains) { row in
-                TrainView(train: row.train,
-                          stop: row.stop)
-            }
+/// How the station's calls are presented.
+enum StationViewMode: String, CaseIterable, Identifiable, Sendable {
+    /// A day per section, one row per call.
+    case list
+    /// A time rail with a now marker.
+    case timeline
+    var id: String {
+        rawValue
+    }
+    var title: LocalizedStringResource {
+        switch self {
+        case .list:
+            return "List"
+        case .timeline:
+            return "Timeline"
         }
     }
+}
+
+struct StationView: View {
+    @AppStorage("StationViewMode") private var mode: StationViewMode = .list
     @State var state: StationViewState
     var body: some View {
-        ListContainer(trains: state.trains)
+        Group {
+            if state.timeline.isEmpty {
+                ContentUnavailableView("No Trains Scheduled",
+                                       systemImage: "train.side.front.car",
+                                       description: Text("Pull to refresh \(state.title)."))
+            } else {
+                switch mode {
+                case .list:
+                    TrainListView(timeline: state.timeline,
+                                  stationName: state.title)
+                case .timeline:
+                    TrainTimelineView(timeline: state.timeline,
+                                      stationName: state.title)
+                }
+            }
+        }
             .navigationTitle(state.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .top) {
+                Picker("View", selection: $mode) {
+                    ForEach(StationViewMode.allCases) { mode in
+                        Text(mode.title)
+                            .tag(mode)
+                    }
+                }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
+                    .background(.bar)
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(destination: {
                         StationLocationView(station: state.station)
                     }, label: {
-                        Image(systemName: "map")
+                        Label("Station Location",
+                              systemImage: "map")
                     })
                 }
             }
@@ -30,12 +70,15 @@ struct StationView: View {
             .task {
                 try? await state.load()
             }
+            // The calendar every date in this screen is grouped and labelled
+            // with, so the views agree with the timeline's day boundaries.
+            .environment(\.calendar, state.component.calendar)
     }
 }
 
 #if DEBUG
 #Preview {
-    NavigationView {
+    NavigationStack {
         StationView(
             state: .init(
                 station: .init(
