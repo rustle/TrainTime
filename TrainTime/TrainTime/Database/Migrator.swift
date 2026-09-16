@@ -102,6 +102,11 @@ actor UserDataMigrator: Migrator {
                 t.column(StationUserData.Columns.isFavorite.name, .boolean)
             }
         }
+        migrator.registerMigration("userdata-v2") { db in
+            try db.alter(table: StationUserData.databaseTableName) { t in
+                t.add(column: StationUserData.Columns.updatedAt.name, .datetime)
+            }
+        }
         try migrator.migrate(pool)
         state = .done
     }

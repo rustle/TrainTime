@@ -344,6 +344,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 91C0E6422F56686600788690 /* TrainTime-Debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TrainTime/TrainTime.entitlements;
 			};
 			name = Debug;
 		};
@@ -351,6 +352,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 91C0E6432F56686600788690 /* TrainTime-Release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = TrainTime/TrainTime.entitlements;
 			};
 			name = Release;
 		};
