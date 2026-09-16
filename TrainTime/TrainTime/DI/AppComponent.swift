@@ -73,7 +73,8 @@ struct AppComponent: AppDependency {
                     fetchTrainProvider: apiService,
                     writeTrainsProvider: cacheConnection,
                     trainsStreamProvider: cacheConnection
-                )
+                ),
+                calendar: .current
             )
         }
     }
@@ -92,6 +93,13 @@ struct AppComponent: AppDependency {
 
 #if DEBUG
 struct PreviewAppComponent: AppDependency {
+    /// Previews are pinned to one calendar so day boundaries and "today"
+    /// don't depend on the machine rendering them.
+    static let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "America/New_York")!
+        return calendar
+    }()
     // TODO: Try out DatabaseQueue and in memory DB
     private actor PreviewDatabase: WriteStationsProvider, StationsStreamProvider, WriteUserDataForStationProvider, WriteStationProvider, StationStreamProvider, WriteTrainsProvider, TrainsStreamProvider {
         private var lastStations: [Station] = []
@@ -219,7 +227,8 @@ struct PreviewAppComponent: AppDependency {
             logExportService: LogExportService()
         ) {
                 StationComponent(stationService: stationService,
-                                 trainService: trainService)
+                                 trainService: trainService,
+                                 calendar: Self.calendar)
             }
     }
 }

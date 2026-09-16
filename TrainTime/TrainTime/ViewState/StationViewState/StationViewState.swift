@@ -11,12 +11,21 @@ final class StationViewState {
     var title: String {
         station.name ?? station.code
     }
-    private(set) var trains: [TrainRow] = []
+    private(set) var trains: [TrainRow] = [] {
+        didSet {
+            timeline = TrainTimeline(rows: trains,
+                                     calendar: component.calendar)
+        }
+    }
+    /// `trains` grouped by day, which is what both view modes scan.
+    private(set) var timeline: TrainTimeline
     let component: StationComponent
     init(station: Station,
          component: StationComponent) {
         self.station = station
         self.component = component
+        self.timeline = TrainTimeline(rows: [],
+                                      calendar: component.calendar)
         loadDebounce = Debounce(duration: .milliseconds(150),
                                 tolerance: .milliseconds(100)) { [weak self] refreshStation, _ in
             await self?._load(refreshStation: refreshStation)
