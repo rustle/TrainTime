@@ -169,7 +169,11 @@ struct TrainTimelineView: View {
                 }
                     .padding(.horizontal)
                     .padding(.vertical, 6)
+#if os(tvOS)
+                    .background(.regularMaterial)
+#else
                     .background(.bar)
+#endif
             }
         }
     }

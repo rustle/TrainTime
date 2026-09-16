@@ -1,5 +1,7 @@
 import Amtrak
+#if canImport(Contacts)
 import Contacts
+#endif
 import CoreLocation
 import Foundation
 import GRDB
@@ -13,6 +15,7 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
         city: String?,
         zip: String?
     ) -> String {
+#if canImport(Contacts)
         let postalAddress = CNMutablePostalAddress()
         let addressLines = [address1, address2].compactMap { $0 }
         if !addressLines.isEmpty {
@@ -26,6 +29,15 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
         }
         let formatter = CNPostalAddressFormatter()
         return formatter.string(from: postalAddress)
+#else
+        // Contacts is unavailable on tvOS; approximate CNPostalAddressFormatter's US layout.
+        let cityLine = [city, zip]
+            .compactMap { $0 }
+            .joined(separator: " ")
+        let lines = [address1, address2, cityLine.isEmpty ? nil : cityLine]
+            .compactMap { $0 }
+        return lines.joined(separator: "\n")
+#endif
     }
     ///
     let name: String?

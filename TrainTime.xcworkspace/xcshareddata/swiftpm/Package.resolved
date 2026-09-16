@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rustle/Amtrak.git",
       "state" : {
-        "revision" : "d61faf5b0ae745a1b62c806f1763535806bf717d",
-        "version" : "0.3.0"
+        "revision" : "418ce0fcc0d3c13589bb56ea368daa9500e688e9",
+        "version" : "0.3.2"
       }
     },
     {

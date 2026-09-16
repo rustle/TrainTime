@@ -26,9 +26,15 @@ struct StationView: View {
     var body: some View {
         Group {
             if state.timeline.isEmpty {
+#if os(tvOS)
+                ContentUnavailableView("No Trains Scheduled",
+                                       systemImage: "train.side.front.car",
+                                       description: Text("Select Refresh to reload \(state.title)."))
+#else
                 ContentUnavailableView("No Trains Scheduled",
                                        systemImage: "train.side.front.car",
                                        description: Text("Pull to refresh \(state.title)."))
+#endif
             } else {
                 switch mode {
                 case .list:
@@ -41,7 +47,9 @@ struct StationView: View {
             }
         }
             .navigationTitle(state.title)
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .safeAreaInset(edge: .top) {
                 Picker("View", selection: $mode) {
                     ForEach(StationViewMode.allCases) { mode in
@@ -52,9 +60,25 @@ struct StationView: View {
                     .pickerStyle(.segmented)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
+#if os(tvOS)
+                    .background(.regularMaterial)
+#else
                     .background(.bar)
+#endif
             }
             .toolbar {
+#if os(tvOS)
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        Task {
+                            try? await state.load(refreshStation: true)
+                        }
+                    } label: {
+                        Label("Refresh",
+                              systemImage: "arrow.clockwise")
+                    }
+                }
+#endif
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(destination: {
                         StationLocationView(station: state.station)

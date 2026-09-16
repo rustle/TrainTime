@@ -6,13 +6,22 @@ protocol AppDependency: Sendable {
 }
 
 struct AppComponent: AppDependency {
+    /// tvOS forbids writing to Documents; Caches is the only place a database
+    /// can live there, at the cost of the system being able to purge it.
+    private static var userDataDirectoryURL: URL {
+#if os(tvOS)
+        URL.cachesDirectory
+#else
+        URL.documentsDirectory
+#endif
+    }
     static func deleteProductionCache() {
         Database.deleteIfExists(name: "cache.db",
                                 directoryURL: URL.cachesDirectory)
     }
     static func deleteProductionUserData() {
         Database.deleteIfExists(name: "userdata.db",
-                                directoryURL: URL.documentsDirectory)
+                                directoryURL: userDataDirectoryURL)
     }
     static func makeProductionAppComponent() async throws -> Self {
         let cache = Database(name: "cache.db",
@@ -27,7 +36,7 @@ struct AppComponent: AppDependency {
                                      underlying: error)
         }
         let userData = Database(name: "userdata.db",
-                                directoryURL: URL.documentsDirectory,
+                                directoryURL: userDataDirectoryURL,
                                 migrator: UserDataMigrator())
         let userDataConnection: DatabasePool
         do {

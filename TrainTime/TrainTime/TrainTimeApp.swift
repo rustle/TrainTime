@@ -86,7 +86,9 @@ struct TrainTimeApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                if state.loadError == nil {
+                // Keep the spinner out of the hierarchy once loaded: tvOS
+                // lists have transparent backgrounds, so it would show through.
+                if state.loadError == nil && state.loadState != .loaded {
                     Group {
                         ProgressView()
                     }

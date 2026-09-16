@@ -26,6 +26,19 @@ struct StationList: View {
                 }
                 .padding(.vertical)
             }
+#if os(tvOS)
+                .contextMenu {
+                    Button {
+                        action()
+                    } label: {
+                        if row.station.isFavorite == true {
+                            Label("Unfavorite", systemImage: "star.fill")
+                        } else {
+                            Label("Favorite", systemImage: "star")
+                        }
+                    }
+                }
+#else
                 .swipeActions(edge: .leading,
                               allowsFullSwipe: true) {
                     Button {
@@ -39,6 +52,7 @@ struct StationList: View {
                         }
                     }
                 }
+#endif
         }
     }
     @State var state: StationListState

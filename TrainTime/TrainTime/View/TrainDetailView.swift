@@ -87,7 +87,9 @@ struct TrainDetailView: View {
             }
         }
             .navigationTitle("Train \(train.trainNum)")
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
     }
 }
 

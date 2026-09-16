@@ -16,23 +16,28 @@ struct StationLocationView: View {
                     latitudinalMeters: 500,
                     longitudinalMeters: 500
                 )
+                let map = Map(initialPosition: .region(region),
+                              interactionModes: []) {
+                    Marker(
+                        station.name ?? station.code,
+                        coordinate: coordinate
+                    )
+                }
+                    .frame(height: 200)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+#if os(tvOS)
+                map
+#else
                 Button {
                     let placemark = MKPlacemark(coordinate: coordinate)
                     let mapItem = MKMapItem(placemark: placemark)
                     mapItem.name = station.name ?? station.code
                     mapItem.openInMaps()
                 } label: {
-                    Map(initialPosition: .region(region),
-                        interactionModes: []) {
-                        Marker(
-                            station.name ?? station.code,
-                            coordinate: coordinate
-                        )
-                    }
-                    .frame(height: 200)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    map
                 }
                 .buttonStyle(.plain)
+#endif
             }
         }
         .navigationTitle(station.name ?? station.code)

@@ -20,7 +20,11 @@ struct TrainListView: View {
                 }
             }
         }
+#if os(tvOS)
+            .listStyle(.grouped)
+#else
             .listStyle(.insetGrouped)
+#endif
     }
 }
 
