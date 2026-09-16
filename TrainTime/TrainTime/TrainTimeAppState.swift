@@ -48,6 +48,8 @@ final class TrainTimeAppState {
             let appComponent = try await AppComponent.makeProductionAppComponent()
             self.appComponent = appComponent
             self.stationListComponent = appComponent.makeStationListComponent()
+            // Only now that everything that reads favorites exists.
+            await appComponent.favoritesCloudStore.start()
             return (.loaded, nil)
         } catch where error is AmtrakClientError {
             Logger.app.error("App load failed (transient): \(error)")

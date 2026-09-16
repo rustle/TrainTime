@@ -42,6 +42,10 @@ struct AppComponent: AppDependency {
         } databaseFactory: {
             (cache, cacheConnection,
              userData, userDataConnection)
+        } favoritesCloudStoreFactory: {
+            FavoritesCloudStore(userDataConnection: userDataConnection,
+                                storage: UbiquitousFavoritesCloudStorage(),
+                                now: { .now })
         }
     }
     let apiService: APIService
@@ -50,6 +54,7 @@ struct AppComponent: AppDependency {
     let cacheConnection: DatabasePool
     let userData: Database
     let userDataConnection: DatabasePool
+    let favoritesCloudStore: FavoritesCloudStore
     func makeStationListComponent() -> StationListComponent {
         StationListComponent(
             stationsService: .init(
@@ -59,7 +64,7 @@ struct AppComponent: AppDependency {
                     cacheConnection: cacheConnection,
                     userDataConnection: userDataConnection
                 ),
-                writeUserDataForStationProvider: userDataConnection
+                writeUserDataForStationProvider: favoritesCloudStore
             ),
             logExportService: logExportService
         ) {
@@ -80,7 +85,8 @@ struct AppComponent: AppDependency {
     }
     init(apiServiceFactory: () -> APIService,
          databaseFactory: () -> (cache: Database, cacheConnection: DatabasePool,
-                                 userData: Database, userDataConnection: DatabasePool)) {
+                                 userData: Database, userDataConnection: DatabasePool),
+         favoritesCloudStoreFactory: () -> FavoritesCloudStore) {
         self.apiService = apiServiceFactory()
         let (cache, cacheConnection,
              userData, userDataConnection) = databaseFactory()
@@ -88,6 +94,7 @@ struct AppComponent: AppDependency {
         self.cacheConnection = cacheConnection
         self.userData = userData
         self.userDataConnection = userDataConnection
+        self.favoritesCloudStore = favoritesCloudStoreFactory()
     }
 }
 
