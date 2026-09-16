@@ -76,26 +76,34 @@ final class StationViewState {
         if stationTask == nil {
             let stationStream = try await self.component.stationService.station(code: station.code)
             stationTask = Task { @MainActor [weak self] in
-                for try await station in stationStream {
-                    guard let self else {
-                        break
+                do {
+                    for try await station in stationStream {
+                        guard let self else {
+                            break
+                        }
+                        guard let station else {
+                            // A concurrent stations refresh can briefly delete this
+                            // row; wait for it to come back rather than ending the
+                            // observation for the view's lifetime.
+                            continue
+                        }
+                        self.station = station
+                        do {
+                            // The station's train list changes over time; the trains
+                            // observation has to be rebuilt to follow it.
+                            try await self.observeTrains(identifiers: station.trainIdentifiers,
+                                                         at: station.code)
+                        } catch {
+                            Logger.viewState.error("StationViewState: observeTrains() error \(error)")
+                        }
                     }
-                    guard let station else {
-                        // A concurrent stations refresh can briefly delete this
-                        // row; wait for it to come back rather than ending the
-                        // observation for the view's lifetime.
-                        continue
-                    }
-                    self.station = station
-                    do {
-                        // The station's train list changes over time; the trains
-                        // observation has to be rebuilt to follow it.
-                        try await self.observeTrains(identifiers: station.trainIdentifiers,
-                                                     at: station.code)
-                    } catch {
-                        Logger.viewState.error("StationViewState: observeTrains() error \(error)")
-                    }
+                } catch {
+                    Logger.viewState.error("StationViewState: station observation error \(error)")
                 }
+                // The observation is over, whether it failed or finished. Drop
+                // it so the next load builds a new one instead of leaving the
+                // view following a dead stream for the rest of its lifetime.
+                self?.stationTask = nil
             }
         }
         try await observeTrains(identifiers: station.trainIdentifiers,
