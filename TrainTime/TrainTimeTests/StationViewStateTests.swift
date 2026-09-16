@@ -111,7 +111,8 @@ private struct Harness {
                 fetchTrainProvider: TestAPIService(),
                 writeTrainsProvider: writeTrains,
                 trainsStreamProvider: trainsStreams
-            )
+            ),
+            calendar: .current
         )
         state = StationViewState(station: station,
                                  component: component)
