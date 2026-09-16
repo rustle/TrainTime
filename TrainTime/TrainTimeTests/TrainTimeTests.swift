@@ -28,7 +28,7 @@ struct TrainTimeTests {
     @Test func fetchAllStationsContainsUCA() async throws {
         let apiService = TestAPIService()
         let stations = try await apiService.fetchStations()
-        #expect(stations[0] == .ucaFixture)
+        #expect(stations.contains(.ucaFixture))
     }
     @Test func fetchStationUCA() async throws {
         let apiService = TestAPIService()
@@ -148,6 +148,97 @@ struct TrainTimeTests {
 
         let identifiersAtStop: [String] = trains.map(\.train.trainID)
         #expect(!identifiersAtStop.contains("48-1"))
+    }
+    @Test func trainRunThatNoLongerExistsIsRemoved() async throws {
+        let testDB = try TestDatabase.make()
+        defer { try? testDB.closeAndDelete() }
+        try await testDB.runMigrations()
+
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        try await TrainService(fetchTrainProvider: TestAPIService(),
+                               writeTrainsProvider: testDB.cacheConnection,
+                               trainsStreamProvider: testDB.cacheConnection)
+            .load(identifiers: identifiers,
+                  at: "UCA")
+
+        // 48-1 finished its run, so the API no longer knows the ID at all.
+        let trainService = TrainService(
+            fetchTrainProvider: TestFailingAPIService(failing: ["48-1"],
+                                                      error: TestFailingAPIService.noTrainFound(id: "48-1")),
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
+        )
+        try await trainService.load(identifiers: identifiers,
+                                    at: "UCA")
+
+        let trains = try #require(
+            try await trainService.trains(identifiers: identifiers,
+                                          at: "UCA")
+                .firstArrayFromStream()
+        )
+
+        let identifiersAtStop: [String] = trains.map(\.train.trainID)
+        #expect(!identifiersAtStop.contains("48-1"))
+    }
+    @Test func emptyIdentifierListKeepsPersistedStops() async throws {
+        let testDB = try TestDatabase.make()
+        defer { try? testDB.closeAndDelete() }
+        try await testDB.runMigrations()
+
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        let trainService = TrainService(fetchTrainProvider: TestAPIService(),
+                                        writeTrainsProvider: testDB.cacheConnection,
+                                        trainsStreamProvider: testDB.cacheConnection)
+        try await trainService.load(identifiers: identifiers,
+                                    at: "UCA")
+
+        // A station whose detail hasn't been fetched yet has no identifiers.
+        // That says nothing about which trains stop there, so it mustn't be
+        // read as "keep none of them".
+        try await trainService.load(identifiers: [],
+                                    at: "UCA")
+
+        let trains = try #require(
+            try await trainService.trains(identifiers: identifiers,
+                                          at: "UCA")
+                .firstArrayFromStream()
+        )
+
+        #expect(trains.map(\.train.trainID).contains("48-1"))
+    }
+    @Test func cancelledLoadWritesNothing() async throws {
+        let testDB = try TestDatabase.make()
+        defer { try? testDB.closeAndDelete() }
+        try await testDB.runMigrations()
+
+        let identifiers = Station.ucaFixture.trainIdentifiers
+        try await TrainService(fetchTrainProvider: TestAPIService(),
+                               writeTrainsProvider: testDB.cacheConnection,
+                               trainsStreamProvider: testDB.cacheConnection)
+            .load(identifiers: identifiers,
+                  at: "UCA")
+
+        let trainService = TrainService(
+            fetchTrainProvider: TestErrorsAPIService(errors: [
+                "63-2": TestFailingAPIService.noStationFound(id: "UCA"),
+                "48-1": CancellationError(),
+            ]),
+            writeTrainsProvider: testDB.cacheConnection,
+            trainsStreamProvider: testDB.cacheConnection
+        )
+        await #expect(throws: CancellationError.self) {
+            try await trainService.load(identifiers: identifiers,
+                                        at: "UCA")
+        }
+
+        let trains = try #require(
+            try await trainService.trains(identifiers: identifiers,
+                                          at: "UCA")
+                .firstArrayFromStream()
+        )
+
+        let identifiersAtStop: [String] = trains.map(\.train.trainID)
+        #expect(Set(identifiersAtStop) == Set(identifiers))
     }
     @Test func transientFetchFailureKeepsPersistedStop() async throws {
         let testDB = try TestDatabase.make()

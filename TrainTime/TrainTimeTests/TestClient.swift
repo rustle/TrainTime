@@ -62,6 +62,10 @@ struct TestFailingAPIService: Sendable, FetchTrainProvider {
     static func noStationFound(id: String) -> any Error {
         AmtrakClientError.noStationFound(id: id)
     }
+    /// The error `AmtrakClient` throws when a train run no longer exists.
+    static func noTrainFound(id: String) -> any Error {
+        AmtrakClientError.noTrainFound(id: id)
+    }
     let failing: Set<String>
     let error: any Error
     private let wrapped = TestAPIService()
@@ -73,6 +77,25 @@ struct TestFailingAPIService: Sendable, FetchTrainProvider {
     func fetchTrain(identifier: String,
                     at stop: String) async throws -> TrainAtStop {
         guard !failing.contains(identifier) else {
+            throw error
+        }
+        return try await wrapped.fetchTrain(identifier: identifier,
+                                            at: stop)
+    }
+}
+
+// MARK: - TestErrorsAPIService
+
+/// Wraps `TestAPIService`, failing each named identifier with its own error.
+struct TestErrorsAPIService: Sendable, FetchTrainProvider {
+    let errors: [String: any Error]
+    private let wrapped = TestAPIService()
+    init(errors: [String: any Error]) {
+        self.errors = errors
+    }
+    func fetchTrain(identifier: String,
+                    at stop: String) async throws -> TrainAtStop {
+        if let error = errors[identifier] {
             throw error
         }
         return try await wrapped.fetchTrain(identifier: identifier,
