@@ -63,16 +63,22 @@ struct StationList: View {
 //        let _ = Self._printChanges()
         NavigationStack {
             List(state.filteredRows ?? state.allRows) { row in
-                    NavigationLink(destination: {
-                        StationView(state: .init(station: row.station,
-                                                 component: state.component.makeStationComponent()))
-                    }, label: {
-                        Row(row: row) {
-                            state.writeUserDataForStation(code: row.station.code,
-                                                          isFavorite: !(row.station.isFavorite ?? false))
+                Row(row: row) {
+                    state.writeUserDataForStation(code: row.station.code,
+                                                  isFavorite: !(row.station.isFavorite ?? false))
+                }
+                    .background {
+                        if !row.station.trainIdentifiers.isEmpty {
+                            NavigationLink(value: row.station) {
+                                EmptyView()
+                            }
+                                .opacity(0)
                         }
-                    })
-                        .disabled(row.station.trainIdentifiers.isEmpty)
+                    }
+                }
+                .navigationDestination(for: Station.self) { station in
+                    StationView(state: .init(station: station,
+                                             component: state.component.makeStationComponent()))
                 }
                 .navigationTitle("Stations")
                 .searchable(text: $state.query,
