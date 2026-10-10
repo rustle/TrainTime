@@ -5,20 +5,32 @@ import os
 import SwiftConcurrencySerialQueue
 
 protocol WriteUserDataForStationProvider: Sendable {
+    /// Writes every change in one step, so a reorder that touches several
+    /// stations lands whole.
+    func writeUserData(_ changes: [StationUserDataChange]) async throws
+}
+
+extension WriteUserDataForStationProvider {
     func writeUserDataForStation(code: String,
-                                 isFavorite: Bool?) async throws
+                                 isFavorite: Bool?) async throws {
+        try await writeUserData([StationUserDataChange(code: code,
+                                                       isFavorite: isFavorite,
+                                                       sortOrder: nil)])
+    }
 }
 
 extension DatabasePool: WriteUserDataForStationProvider {
-    func writeUserDataForStation(code: String,
-                                 isFavorite: Bool?) async throws {
+    func writeUserData(_ changes: [StationUserDataChange]) async throws {
         try await write { db in
-            var userData = try StationUserData
-                .filter(StationUserData.Columns.code == code)
-                .fetchOne(db) ?? StationUserData(code: code,
-                                                 isFavorite: nil)
-            userData.isFavorite = isFavorite
-            try userData.upsert(db)
+            for change in changes {
+                var userData = try StationUserData
+                    .filter(StationUserData.Columns.code == change.code)
+                    .fetchOne(db) ?? StationUserData(code: change.code,
+                                                     isFavorite: nil)
+                userData.isFavorite = change.isFavorite
+                userData.sortOrder = change.isFavorite == true ? change.sortOrder : nil
+                try userData.upsert(db)
+            }
         }
     }
 }
@@ -47,11 +59,9 @@ struct StationsService: Sendable {
         Logger.service.debug("Saving stations")
         try await writeStationsProvider.writeStations(stations)
     }
-    func writeUserDataForStation(code: String,
-                                 isFavorite: Bool?) async throws {
+    func writeUserData(_ changes: [StationUserDataChange]) async throws {
         try await writeUserDataForStationProvider
-            .writeUserDataForStation(code: code,
-                                     isFavorite: isFavorite)
+            .writeUserData(changes)
     }
     func stations() async throws -> any AsyncThrowingSendableSequence<[Station]> {
         try await stationsStreamProvider.stations()

@@ -4,15 +4,21 @@ import GRDB
 struct StationUserData: Sendable {
     let code: String
     var isFavorite: Bool?
-    /// When `isFavorite` last changed. Nil for rows written before the app
+    /// When this row last changed. Nil for rows written before the app
     /// tracked it; cloud sync treats those as local-only until it stamps them.
     var updatedAt: Date?
+    /// Where the station sits among favorites; smaller is higher. Nil for
+    /// stations that aren't favorites and for favorites written before the
+    /// app let people order them, which sort after the ordered ones by name.
+    var sortOrder: Double?
     init(code: String,
          isFavorite: Bool?,
-         updatedAt: Date? = nil) {
+         updatedAt: Date? = nil,
+         sortOrder: Double? = nil) {
         self.code = code
         self.isFavorite = isFavorite
         self.updatedAt = updatedAt
+        self.sortOrder = sortOrder
     }
 }
 
@@ -23,6 +29,7 @@ extension StationUserData: TableRecord {
         // See also Station.Columns.isFavorite
         static let isFavorite = Column("isFavorite")
         static let updatedAt = Column("updatedAt")
+        static let sortOrder = Column("sortOrder")
     }
 }
 
@@ -35,6 +42,7 @@ extension StationUserData: FetchableRecord {
         code = row[Columns.code]
         isFavorite = row[Columns.isFavorite]
         updatedAt = row[Columns.updatedAt]
+        sortOrder = row[Columns.sortOrder]
     }
 }
 
@@ -43,5 +51,6 @@ extension StationUserData: PersistableRecord {
         container[Columns.code] = code
         container[Columns.isFavorite] = isFavorite
         container[Columns.updatedAt] = updatedAt
+        container[Columns.sortOrder] = sortOrder
     }
 }

@@ -99,6 +99,21 @@ private struct Harness {
     func cloudFavorites() throws -> Set<String> {
         Set(try storage.records.filter(\.isFavorite).map(\.code))
     }
+    /// Favorites in the order the list would show them.
+    func localFavoriteOrder() async throws -> [String] {
+        let positions = try await database.userDataConnection.read { db in
+            try StationUserData
+                .filter(StationUserData.Columns.isFavorite == true)
+                .order(StationUserData.Columns.code)
+                .fetchAll(db)
+                .map { FavoritePosition(code: $0.code,
+                                        sortOrder: $0.sortOrder) }
+        }
+        return FavoritesOrdering.displayOrder(positions).map(\.code)
+    }
+    func cloudSortOrder(of code: String) throws -> Double? {
+        try storage.records.first { $0.code == code }?.sortOrder
+    }
     /// External changes are handled on the store's own task, so poll.
     func waitUntil(_ condition: () async throws -> Bool) async throws -> Bool {
         let deadline = ContinuousClock.now + .seconds(5)
@@ -114,10 +129,19 @@ private struct Harness {
 
 private func record(_ code: String,
                     isFavorite: Bool,
-                    at date: Date) -> FavoriteRecord {
+                    at date: Date,
+                    sortOrder: Double? = nil) -> FavoriteRecord {
     FavoriteRecord(code: code,
                    isFavorite: isFavorite,
-                   updatedAt: date)
+                   updatedAt: date,
+                   sortOrder: sortOrder)
+}
+
+private func change(_ code: String,
+                    sortOrder: Double?) -> StationUserDataChange {
+    StationUserDataChange(code: code,
+                          isFavorite: true,
+                          sortOrder: sortOrder)
 }
 
 // MARK: - Tests
@@ -233,6 +257,97 @@ struct FavoritesCloudStoreTests {
         })
         #expect(harness.storage.setCount == pushesBefore)
     }
+    // MARK: Ordering
+    @Test func reorderTravelsToTheCloudAsOneWrite() async throws {
+        let harness = try await Harness()
+        defer { harness.tearDown() }
+        await harness.store.start()
+        try await harness.store.writeUserData([change("UCA", sortOrder: 0),
+                                               change("ROC", sortOrder: 1)])
+        let pushesBefore = harness.storage.setCount
+
+        harness.clock.advance(by: 1)
+        try await harness.store.writeUserData([change("ROC", sortOrder: -1)])
+
+        #expect(harness.storage.setCount == pushesBefore + 1)
+        #expect(try harness.cloudSortOrder(of: "ROC") == -1)
+        #expect(try harness.cloudSortOrder(of: "UCA") == 0)
+        #expect(try await harness.localFavoriteOrder() == ["ROC", "UCA"])
+    }
+    @Test func cloudReorderIsAppliedLocally() async throws {
+        let harness = try await Harness()
+        defer { harness.tearDown() }
+        await harness.store.start()
+        try await harness.store.writeUserData([change("UCA", sortOrder: 0),
+                                               change("ROC", sortOrder: 1)])
+
+        // Another device drags ROC to the top.
+        harness.clock.advance(by: 60)
+        try harness.storage.replace(with: [record("UCA", isFavorite: true, at: harness.clock.now() - 60, sortOrder: 0),
+                                           record("ROC", isFavorite: true, at: harness.clock.now(), sortOrder: -1)],
+                                    reason: .serverChange)
+
+        #expect(try await harness.waitUntil {
+            try await harness.localFavoriteOrder() == ["ROC", "UCA"]
+        })
+    }
+    @Test func unfavoritingClearsThePositionEverywhere() async throws {
+        let harness = try await Harness()
+        defer { harness.tearDown() }
+        await harness.store.start()
+        try await harness.store.writeUserData([change("UCA", sortOrder: 0)])
+        harness.clock.advance(by: 1)
+
+        try await harness.store.writeUserData([StationUserDataChange(code: "UCA",
+                                                                     isFavorite: nil,
+                                                                     sortOrder: nil)])
+
+        #expect(try harness.cloudSortOrder(of: "UCA") == nil)
+        let local = try await harness.database.userDataConnection.read { db in
+            try StationUserData.fetchOne(db, key: "UCA")
+        }
+        #expect(local?.isFavorite == nil)
+        #expect(local?.sortOrder == nil)
+    }
+    @Test func legacyFavoritesReachTheCloudWithoutAPosition() async throws {
+        let harness = try await Harness()
+        defer { harness.tearDown() }
+        try await harness.writeLegacyFavorite("UCA")
+
+        await harness.store.start()
+
+        #expect(try harness.cloudFavorites() == ["UCA"])
+        #expect(try harness.cloudSortOrder(of: "UCA") == nil)
+    }
+}
+
+struct FavoriteRecordCodingTests {
+    @Test func payloadFromBeforeOrderingStillDecodes() throws {
+        let json = Data("""
+        [{"code":"UCA","isFavorite":true,"updatedAt":780321600}]
+        """.utf8)
+        let records = try JSONDecoder().decode([FavoriteRecord].self,
+                                               from: json)
+        #expect(records == [FavoriteRecord(code: "UCA",
+                                           isFavorite: true,
+                                           updatedAt: Date(timeIntervalSinceReferenceDate: 780321600))])
+        #expect(records.first?.sortOrder == nil)
+    }
+    @Test func missingOrderIsLeftOutOfThePayload() throws {
+        let data = try JSONEncoder().encode([FavoriteRecord(code: "UCA",
+                                                            isFavorite: true,
+                                                            updatedAt: Date(timeIntervalSinceReferenceDate: 0))])
+        let json = try #require(String(data: data, encoding: .utf8))
+        #expect(!json.contains("sortOrder"))
+    }
+    @Test func orderRoundTrips() throws {
+        let record = FavoriteRecord(code: "UCA",
+                                    isFavorite: true,
+                                    updatedAt: Date(timeIntervalSinceReferenceDate: 0),
+                                    sortOrder: 2.5)
+        let data = try JSONEncoder().encode([record])
+        #expect(try JSONDecoder().decode([FavoriteRecord].self, from: data) == [record])
+    }
 }
 
 struct FavoriteRecordMergeTests {
@@ -253,5 +368,43 @@ struct FavoriteRecordMergeTests {
         let merged = [record("UCA", isFavorite: false, at: date)]
             .merged(with: [record("UCA", isFavorite: true, at: date)])
         #expect(merged == [record("UCA", isFavorite: true, at: date)])
+    }
+    @Test func laterMoveWinsOverAnEarlierOne() {
+        let older = iso8601("2026-09-01T12:00:00Z")
+        let newer = iso8601("2026-09-02T12:00:00Z")
+        let merged = [record("UCA", isFavorite: true, at: older, sortOrder: 0)]
+            .merged(with: [record("UCA", isFavorite: true, at: newer, sortOrder: 5)])
+        #expect(merged == [record("UCA", isFavorite: true, at: newer, sortOrder: 5)])
+    }
+    @Test func favoriteFromAnOlderAppVersionKeepsThePositionItDidNotKnowAbout() {
+        let older = iso8601("2026-09-01T12:00:00Z")
+        let newer = iso8601("2026-09-02T12:00:00Z")
+        let merged = [record("UCA", isFavorite: true, at: older, sortOrder: 3)]
+            .merged(with: [record("UCA", isFavorite: true, at: newer)])
+        #expect(merged == [record("UCA", isFavorite: true, at: newer, sortOrder: 3)])
+    }
+    @Test func newerUnfavoriteDropsThePosition() {
+        let older = iso8601("2026-09-01T12:00:00Z")
+        let newer = iso8601("2026-09-02T12:00:00Z")
+        let merged = [record("UCA", isFavorite: true, at: older, sortOrder: 3)]
+            .merged(with: [record("UCA", isFavorite: false, at: newer)])
+        #expect(merged == [record("UCA", isFavorite: false, at: newer)])
+    }
+    @Test func mergeDoesNotDependOnWhichSideComesFirst() {
+        let date = iso8601("2026-09-01T12:00:00Z")
+        let cases: [([FavoriteRecord], [FavoriteRecord])] = [
+            ([record("UCA", isFavorite: true, at: date, sortOrder: 1)],
+             [record("UCA", isFavorite: true, at: date, sortOrder: 2)]),
+            ([record("UCA", isFavorite: true, at: date)],
+             [record("UCA", isFavorite: true, at: date, sortOrder: 2)]),
+            ([record("UCA", isFavorite: false, at: date)],
+             [record("UCA", isFavorite: true, at: date, sortOrder: 2)]),
+        ]
+        for (lhs, rhs) in cases {
+            #expect(lhs.merged(with: rhs) == rhs.merged(with: lhs))
+        }
+        #expect([record("UCA", isFavorite: true, at: date, sortOrder: 1)]
+            .merged(with: [record("UCA", isFavorite: true, at: date, sortOrder: 2)])
+            == [record("UCA", isFavorite: true, at: date, sortOrder: 1)])
     }
 }

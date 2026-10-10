@@ -6,27 +6,30 @@ protocol StationsStreamProvider: Sendable {
 }
 
 extension DatabasePool {
-    fileprivate func stationFavorites() -> AsyncValueObservation<[String]> {
+    fileprivate func stationFavorites() -> AsyncValueObservation<[FavoritePosition]> {
         ValueObservation
             .tracking { db in
                 try StationUserData
                     .filter(StationUserData.Columns.isFavorite == true)
-                    .select(StationUserData.Columns.code)
+                    .order(StationUserData.Columns.code)
                     .fetchAll(db)
+                    .map { FavoritePosition(code: $0.code,
+                                            sortOrder: $0.sortOrder) }
             }
             .values(in: self)
     }
-    fileprivate func stations(favorites: [String]) -> AsyncValueObservation<[Station]> {
+    fileprivate func stations(favorites: [FavoritePosition]) -> AsyncValueObservation<[Station]> {
         let code = Station.Columns.code
         let isFavorite = Station.Columns.isFavorite
-        let isFavoriteAlias = SQL("(CASE WHEN \(code) IN \(favorites) THEN 1 ELSE NULL END) AS \(isFavorite)")
-        let isFavoriteOrdering = favorites.contains(code).desc
+        let favoriteCodes = favorites.map(\.code)
+        let isFavoriteAlias = SQL("(CASE WHEN \(code) IN \(favoriteCodes) THEN 1 ELSE NULL END) AS \(isFavorite)")
+        let sortOrders = Dictionary(favorites.map { ($0.code, $0.sortOrder) },
+                                    uniquingKeysWith: { first, _ in first })
         return ValueObservation
             .tracking { db in
                 try Station
                     .annotated(with: [isFavoriteAlias])
                     .order(
-                        isFavoriteOrdering,
                         coalesce([
                             Station.Columns.normalizedName,
                             Station.Columns.normalizedCode
@@ -34,6 +37,14 @@ extension DatabasePool {
                             .asc
                     )
                     .fetchAll(db)
+                    .map { station in
+                        var station = station
+                        station.favoriteSortOrder = sortOrders[station.code] ?? nil
+                        return station
+                    }
+                    // Favorites live in another database, so their order is
+                    // applied here rather than in SQL.
+                    .orderedFavoritesFirst()
             }
             .values(in: self)
     }

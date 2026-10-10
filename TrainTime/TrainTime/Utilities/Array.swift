@@ -1,3 +1,23 @@
+import Foundation
+
+extension Array {
+    /// The array with the elements at `source` moved to sit before whatever
+    /// is currently at `destination`, matching SwiftUI's
+    /// `move(fromOffsets:toOffset:)` without importing SwiftUI.
+    func moving(fromOffsets source: IndexSet,
+                toOffset destination: Int) -> Self {
+        let moved = source.map { self[$0] }
+        var result = self
+        for index in source.reversed() {
+            result.remove(at: index)
+        }
+        let insertion = destination - source.count(where: { $0 < destination })
+        result.insert(contentsOf: moved,
+                      at: insertion)
+        return result
+    }
+}
+
 extension Array where Element: Comparable {
     @inlinable
     func binarySearch(_ target: Element) -> Index {

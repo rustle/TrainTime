@@ -107,6 +107,11 @@ actor UserDataMigrator: Migrator {
                 t.add(column: StationUserData.Columns.updatedAt.name, .datetime)
             }
         }
+        migrator.registerMigration("userdata-v3") { db in
+            try db.alter(table: StationUserData.databaseTableName) { t in
+                t.add(column: StationUserData.Columns.sortOrder.name, .double)
+            }
+        }
         try migrator.migrate(pool)
         state = .done
     }

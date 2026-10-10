@@ -89,11 +89,55 @@ struct FavoriteRecord: Codable, Equatable, Sendable {
     let code: String
     let isFavorite: Bool
     let updatedAt: Date
+    /// Where the station sits among favorites. Nil for unfavorites and for
+    /// records from app versions that didn't order favorites. Left out of
+    /// the JSON when nil, and ignored by older versions when present, so
+    /// both directions of the upgrade keep decoding.
+    var sortOrder: Double?
+    init(code: String,
+         isFavorite: Bool,
+         updatedAt: Date,
+         sortOrder: Double? = nil) {
+        self.code = code
+        self.isFavorite = isFavorite
+        self.updatedAt = updatedAt
+        self.sortOrder = sortOrder
+    }
+}
+
+extension FavoriteRecord {
+    /// Last writer wins. On a tie, keeping a favorite beats dropping one,
+    /// and knowing the order beats not knowing it. A winning favorite that
+    /// has no position takes the loser's, so toggling on an older app
+    /// version doesn't throw the station's place away. Symmetric, so the
+    /// result doesn't depend on which side was merged first.
+    static func resolve(_ lhs: FavoriteRecord,
+                        _ rhs: FavoriteRecord) -> FavoriteRecord {
+        var winner: FavoriteRecord
+        let loser: FavoriteRecord
+        if lhs.updatedAt != rhs.updatedAt {
+            (winner, loser) = lhs.updatedAt > rhs.updatedAt ? (lhs, rhs) : (rhs, lhs)
+        } else if lhs.isFavorite != rhs.isFavorite {
+            (winner, loser) = lhs.isFavorite ? (lhs, rhs) : (rhs, lhs)
+        } else {
+            switch (lhs.sortOrder, rhs.sortOrder) {
+            case let (left?, right?):
+                (winner, loser) = left <= right ? (lhs, rhs) : (rhs, lhs)
+            case (_?, nil):
+                (winner, loser) = (lhs, rhs)
+            default:
+                (winner, loser) = (rhs, lhs)
+            }
+        }
+        if winner.isFavorite, winner.sortOrder == nil {
+            winner.sortOrder = loser.sortOrder
+        }
+        return winner
+    }
 }
 
 extension [FavoriteRecord] {
-    /// Last writer wins per station. On a tie, keeping a favorite beats
-    /// dropping one.
+    /// Merges per station; see `FavoriteRecord.resolve`.
     func merged(with other: [FavoriteRecord]) -> [FavoriteRecord] {
         var byCode: [String: FavoriteRecord] = [:]
         for record in self + other {
@@ -101,10 +145,7 @@ extension [FavoriteRecord] {
                 byCode[record.code] = record
                 continue
             }
-            if record.updatedAt > existing.updatedAt
-                || (record.updatedAt == existing.updatedAt && record.isFavorite && !existing.isFavorite) {
-                byCode[record.code] = record
-            }
+            byCode[record.code] = FavoriteRecord.resolve(existing, record)
         }
         return byCode.values.sorted { $0.code < $1.code }
     }
@@ -216,14 +257,16 @@ actor FavoritesCloudStore {
                     if let updatedAt = row.updatedAt {
                         return FavoriteRecord(code: row.code,
                                               isFavorite: row.isFavorite == true,
-                                              updatedAt: updatedAt)
+                                              updatedAt: updatedAt,
+                                              sortOrder: row.isFavorite == true ? row.sortOrder : nil)
                     }
                     guard row.isFavorite == true else {
                         return nil
                     }
                     return FavoriteRecord(code: row.code,
                                           isFavorite: true,
-                                          updatedAt: now)
+                                          updatedAt: now,
+                                          sortOrder: row.sortOrder)
                 }
         }
     }
@@ -242,9 +285,7 @@ actor FavoritesCloudStore {
     private func write(_ records: [FavoriteRecord]) async throws {
         try await userDataConnection.write { db in
             for record in records {
-                try StationUserData(code: record.code,
-                                    isFavorite: record.isFavorite ? true : nil,
-                                    updatedAt: record.updatedAt)
+                try StationUserData(record)
                     .upsert(db)
             }
         }
@@ -266,19 +307,31 @@ actor FavoritesCloudStore {
 /// mirrored to iCloud in the same queued step, after any reconciliation
 /// already in flight.
 extension FavoritesCloudStore: WriteUserDataForStationProvider {
-    func writeUserDataForStation(code: String,
-                                 isFavorite: Bool?) async throws {
-        let record = FavoriteRecord(code: code,
-                                    isFavorite: isFavorite == true,
-                                    updatedAt: now())
+    func writeUserData(_ changes: [StationUserDataChange]) async throws {
+        let now = now()
+        let records = changes.map { change in
+            FavoriteRecord(code: change.code,
+                           isFavorite: change.isFavorite == true,
+                           updatedAt: now,
+                           sortOrder: change.isFavorite == true ? change.sortOrder : nil)
+        }
         try await queue.enqueue { _ in
             try await self.userDataConnection.write { db in
-                try StationUserData(code: record.code,
-                                    isFavorite: record.isFavorite ? true : nil,
-                                    updatedAt: record.updatedAt)
-                    .upsert(db)
+                for record in records {
+                    try StationUserData(record)
+                        .upsert(db)
+                }
             }
-            await self.push(self.cloudRecords().merged(with: [record]))
+            await self.push(self.cloudRecords().merged(with: records))
         }
+    }
+}
+
+private extension StationUserData {
+    init(_ record: FavoriteRecord) {
+        self.init(code: record.code,
+                  isFavorite: record.isFavorite ? true : nil,
+                  updatedAt: record.updatedAt,
+                  sortOrder: record.isFavorite ? record.sortOrder : nil)
     }
 }

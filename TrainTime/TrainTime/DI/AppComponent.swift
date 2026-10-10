@@ -130,12 +130,13 @@ struct PreviewAppComponent: AppDependency {
                 (lhs.normalizedName ?? lhs.normalizedCode) < (rhs.normalizedName ?? rhs.normalizedCode)
             })
         }
-        func writeUserDataForStation(code: String,
-                                     isFavorite: Bool?) async throws {
-            if isFavorite == true {
-                lastFavorites.insert(code)
-            } else {
-                lastFavorites.remove(code)
+        func writeUserData(_ changes: [StationUserDataChange]) async throws {
+            for change in changes {
+                if change.isFavorite == true {
+                    lastFavorites.insert(change.code)
+                } else {
+                    lastFavorites.remove(change.code)
+                }
             }
             _userDataContinuation.yield(lastFavorites)
         }

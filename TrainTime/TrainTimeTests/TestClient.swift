@@ -4,8 +4,7 @@ import Amtrak
 // MARK: - TestUserDataProvider
 
 final class TestUserDataProvider: WriteUserDataForStationProvider, Sendable {
-    func writeUserDataForStation(code: String,
-                                 isFavorite: Bool?) async throws {}
+    func writeUserData(_ changes: [StationUserDataChange]) async throws {}
 }
 
 // MARK: - TestAPIService

@@ -79,6 +79,9 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
     // MARK: - User data
     ///
     var isFavorite: Bool?
+    /// The station's place among favorites, from user data. Nil when the
+    /// station isn't a favorite or was favorited before ordering existed.
+    var favoriteSortOrder: Double?
     // MARK: - Debugging
     ///
     var debugDescription: String {
@@ -110,6 +113,7 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
         normalizedName = name?.normalized
         normalizedCity = city?.normalized
         isFavorite = nil
+        favoriteSortOrder = nil
         formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
                                                              address2: address2,
                                                              city: city,
@@ -131,6 +135,7 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
         normalizedName = name?.normalized
         normalizedCity = city?.normalized
         isFavorite = nil
+        favoriteSortOrder = nil
         formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
                                                              address2: address2,
                                                              city: city,
@@ -162,6 +167,7 @@ struct Station: Codable, Equatable, Hashable, Sendable, CustomDebugStringConvert
         normalizedName = name?.normalized
         normalizedCity = city?.normalized
         isFavorite = nil
+        favoriteSortOrder = nil
         formattedPostalAddress = Self.formattedPostalAddress(address1: address1,
                                                              address2: address2,
                                                              city: city,

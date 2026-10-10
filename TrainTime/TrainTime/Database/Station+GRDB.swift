@@ -48,6 +48,8 @@ extension Station: FetchableRecord {
         normalizedName = row[Columns.normalizedName]
         normalizedCity = row[Columns.normalizedCity]
         isFavorite = row[Columns.isFavorite]
+        // Set from user data after the fetch; see StationsStreamProvider.
+        favoriteSortOrder = nil
     }
 }
 
